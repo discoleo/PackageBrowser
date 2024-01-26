@@ -1,5 +1,5 @@
 Package: PackageBrowser
-Title: Interactive Shiny App to Browse Peptide Epitopes
+Title: Interactive Shiny App to Browse R Packages
 Version: 0.1.0
 Authors@R:
     person("Leonard", "Mada", "leo.mada@syonic.eu", role = c("aut", "cre"))
