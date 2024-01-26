@@ -14,9 +14,9 @@ server.app = function(input, output, session) {
 	values = reactiveValues(
 		Active    = "Not",  # Active Tab
 		fullData  = NULL,   # initial Data
-		fltData   = NULL,
+		fltData   = NULL,   # Active Filter
 		flt       = NULL,   # Filters
-		fltHist   = NULL    # Filter History
+		fltHist   = as.filter(filter.regex)   # Filter History
 	);
 	
 	# Reset Filters on Data table
@@ -60,9 +60,14 @@ server.app = function(input, output, session) {
 	})
 	observeEvent(input$openPkgs, {
 		id = input$tblData_rows_selected;
-		if(is.null(id)) return();
-		browseURL(paste0("https://cran.r-project.org/web/packages/",
-			values$fullData$Package[id][1], "/index.html"))
+		if(is.null(id)) {
+			showModal(modalDialog(
+				title = "Nothing selected! Please select first a package.",
+				easyClose = TRUE, footer = NULL
+			));
+			return();
+		}
+		browseURL(url.cran(values$fullData$Package[id][1]));
 	})
 	
 	### Options: Data
@@ -100,5 +105,17 @@ server.app = function(input, output, session) {
 		sW$Len = nchar(sW$Word);
 		DT::datatable(sW, filter = 'top',
 			options = option.regex(values$reg.Data));
+	})
+	
+	### Help
+	output$txtHelp <- renderUI({
+		HTML("<div>
+			<h2>All Packages</h2>
+			<p>Press the <b>All</b> button. The computer must be connected to the internet!</p>
+			<h2>Open a Specific Packag</h2>
+			<p>Select 1 package from the table by clicking on the respective row.
+				The specific web page on CRAN will be opened.</p>
+			</div>"
+		)
 	})
 }

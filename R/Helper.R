@@ -12,3 +12,20 @@ read.html = function(url = NULL) {
 	# x$H    = dt$hour;
 	return(x);
 }
+url.cran = function(x) {
+	paste0("https://cran.r-project.org/web/packages/",
+			x, "/index.html");
+}
+
+as.filter = function(x, expand = TRUE) {
+	if(is.null(x)) return(x);
+	if(expand) x = paste0(x, "[a-z]*")
+	data.frame(Flt = x, Regex = TRUE, Date = Sys.time());
+}
+
+filter.regex = c(
+	"meta",
+	"model",
+	"solve",
+	"prot(?!o|ec)"
+)
