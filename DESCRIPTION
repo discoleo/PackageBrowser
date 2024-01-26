@@ -1,0 +1,16 @@
+Package: PackageBrowser
+Title: Interactive Shiny App to Browse Peptide Epitopes
+Version: 0.1.0
+Authors@R:
+    person("Leonard", "Mada", "leo.mada@syonic.eu", role = c("aut", "cre"))
+Depends: shiny, DT, rvest
+Description: Shiny web app to browse through the CRAN packages.
+License: `use_gpl3_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://github.com/discoleo/PackageBrowser
+BugReports: https://github.com/discoleo/PackageBrowser/issues
