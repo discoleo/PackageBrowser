@@ -98,11 +98,7 @@ server.app = function(input, output, session) {
 	output$tblWords = DT::renderDT({
 		x = values$fltData$Title;
 		cat("Rows: ", nrow(x), "\n");
-		sW = strsplit(x, "[ ,\t\n'\"()/]+");
-		sW = table(unlist(sW));
-		sW = as.data.frame(sW, stringsAsFactors = FALSE);
-		names(sW)[1] = "Word";
-		sW$Len = nchar(sW$Word);
+		sW = as.words(x);
 		DT::datatable(sW, filter = 'top',
 			options = option.regex(values$reg.Data));
 	})
@@ -110,11 +106,12 @@ server.app = function(input, output, session) {
 	### Help
 	output$txtHelp <- renderUI({
 		HTML("<div>
-			<h2>All Packages</h2>
-			<p>Press the <b>All</b> button. The computer must be connected to the internet!</p>
-			<h2>Open a Specific Packag</h2>
+			<h2>All Packages on CRAN</h2>
+			<p>The titles of all packages available on CRAN are downloaded by pressing the <b>All</b> button.
+				The computer must be connected to the internet!</p>
+			<h2>Open a Specific Package</h2>
 			<p>Select 1 package from the table by clicking on the respective row.
-				The specific web page on CRAN will be opened.</p>
+				Click the <b?Open</> button and the specific CRAN web page will be opened.</p>
 			</div>"
 		)
 	})
