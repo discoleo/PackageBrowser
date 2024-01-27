@@ -17,10 +17,11 @@ url.cran = function(x) {
 			x, "/index.html");
 }
 
-as.filter = function(x, expand = TRUE) {
+### Filters
+as.filter = function(x, expand = TRUE, isRegex = TRUE) {
 	if(is.null(x)) return(x);
-	if(expand) x = paste0(x, "[a-z]*")
-	data.frame(Flt = x, Regex = TRUE, Date = Sys.time());
+	if(expand && isRegex) x = paste0(x, "[a-z]*")
+	data.frame(Flt = x, Regex = isRegex, Date = Sys.time());
 }
 
 as.filter.tbl = function(x, date = NULL) {

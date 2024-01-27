@@ -17,6 +17,8 @@ filter.regex = c(
 	"meta",
 	"model",
 	"solve",
-	"prot(?!o|ec)"
+	"prot(?!o|ec)",
+	"min(?<!deter...)(?:i(?![-ms ])|e(?!sc))",
+	"pubmed"
 )
 

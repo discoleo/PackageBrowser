@@ -46,6 +46,9 @@ getUI = function() {
 		tabPanel("Words", # icon = icon("Words"),
 				fluidRow(DT::DTOutput("tblWords"))
 		),
+		tabPanel("History", # icon = icon("History"),
+				fluidRow(DT::DTOutput("tblFltHistory"))
+		),
 		tabPanel("Help", # icon = icon("Help"),
 				uiOutput("txtHelp")
 		)

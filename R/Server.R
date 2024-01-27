@@ -13,9 +13,9 @@ server.app = function(input, output, session) {
 	# Dynamic variable
 	values = reactiveValues(
 		Active    = "Not",  # Active Tab
-		fullData  = NULL,   # initial Data
-		fltData   = NULL,   # Active Filter
-		flt       = NULL,   # Filters
+		fullData  = NULL,   # Initial Data
+		fltData   = NULL,   # Filtered Data
+		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex)   # Filter History
 	);
 	
@@ -85,6 +85,16 @@ server.app = function(input, output, session) {
 		values$flt = input$tblData_search_columns;
 		output$tblData = DT::renderDT(dataTable());
 	})
+	### Filters
+	observeEvent(input$tblData_search_columns[[2]], {
+		flt = input$tblData_search_columns[[2]];
+		# print(input$tblData_search_columns[[2]]);
+		if(flt == "") return();
+		fltLast = values$fltHist$Flt;
+		fltLast = tail(fltLast, 1);
+		if(flt == fltLast) return();
+		values$fltHist = rbind(values$fltHist, as.filter(flt));
+	})
 	
 	### Tables
 	
@@ -102,6 +112,12 @@ server.app = function(input, output, session) {
 		cat("Rows: ", nrow(x), "\n");
 		sW = as.words(x);
 		DT::datatable(sW, filter = 'top',
+			options = option.regex(values$reg.Data));
+	})
+	
+	# Filter History
+	output$tblFltHistory = DT::renderDT({
+		DT::datatable(values$fltHist, filter = 'top',
 			options = option.regex(values$reg.Data));
 	})
 	
