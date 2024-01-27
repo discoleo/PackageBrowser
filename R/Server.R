@@ -58,6 +58,7 @@ server.app = function(input, output, session) {
 		# filter.byTable();
 		values$fltData = values$fullData;
 	})
+	### Open Package Page
 	observeEvent(input$openPkgs, {
 		id = input$tblData_rows_selected;
 		if(is.null(id)) {
@@ -69,27 +70,28 @@ server.app = function(input, output, session) {
 		}
 		browseURL(url.cran(values$fullData$Package[id][1]));
 	})
+	### Today
+	observeEvent(input$fltToday, {
+		values$flt = input$tblData_search_columns;
+		dt = as.Date(Sys.time());
+		dt = c(dt, dt);
+		output$tblData = DT::renderDT(dataTable(date = dt));
+	})
 	
 	### Options: Data
 	observeEvent(input$chkRegex, {
 		isReg = input$chkRegex;
 		values$reg.Data = isReg;
 		values$flt = input$tblData_search_columns;
-		output$tblData <- DT::renderDT(dataTable());
+		output$tblData = DT::renderDT(dataTable());
 	})
 	
 	### Tables
 	
 	# Data
-	dataTable = function() ({
+	dataTable = function(date = NULL) ({
 		reset.tab();
-		flt = values$flt;
-		if( ! is.null(flt)) {
-			flt = c("", flt); # Row ID
-			flt = lapply(flt, function(x) if(x == "") NULL else list(search = x));
-			isN = all(is.null(unlist(flt)));
-			flt = if(isN) NULL else list(searchCols = flt);
-		}
+		flt = as.filter.tbl(values$flt, date=date);
 		DT::datatable(values$fullData, filter = 'top',
 			options = option.regex(values$reg.Data, varia = flt));
 	})

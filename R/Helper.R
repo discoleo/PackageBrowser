@@ -23,6 +23,27 @@ as.filter = function(x, expand = TRUE) {
 	data.frame(Flt = x, Regex = TRUE, Date = Sys.time());
 }
 
+as.filter.tbl = function(x, date = NULL) {
+	flt = x;
+	if( ! is.null(flt)) {
+		flt = c("", flt); # Row ID
+		flt = lapply(flt, function(x) if(x == "") NULL else list(search = x));
+		isN = all(is.null(unlist(flt)));
+		flt = if(isN) NULL else list(searchCols = flt);
+	}
+	if( ! is.null(date)) {
+		dt = paste0(format(date, format = "%Y-%m-%d"), collapse = "...");
+		dt = list(search = dt);
+		if(is.null(flt)) {
+			flt = list(searchCols = list(NULL, NULL, NULL, dt));
+		} else {
+			flt[[1]][[4]] = dt; # id hardcoded
+		}
+		# print(flt)
+	}
+	return(flt);
+}
+
 as.words = function(x) {
 	sW = strsplit(x, "[ ,\t\n'\"()/]+");
 	sW = table(unlist(sW));
