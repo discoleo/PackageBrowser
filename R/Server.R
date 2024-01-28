@@ -70,11 +70,18 @@ server.app = function(input, output, session) {
 		}
 		browseURL(url.cran(values$fullData$Package[id][1]));
 	})
-	### Today
+	### Filter: Today
 	observeEvent(input$fltToday, {
 		values$flt = input$tblData_search_columns;
 		dt = as.Date(Sys.time());
 		dt = c(dt, dt);
+		output$tblData = DT::renderDT(dataTable(date = dt));
+	})
+	### Filter: 1 Week
+	observeEvent(input$fltWeek, {
+		values$flt = input$tblData_search_columns;
+		dt = as.Date(Sys.time());
+		dt = c(dt - 7, dt);
 		output$tblData = DT::renderDT(dataTable(date = dt));
 	})
 	

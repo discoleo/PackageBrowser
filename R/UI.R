@@ -39,7 +39,8 @@ getUI = function() {
 					"  Open selection: ",
 					actionButton("openPkgs", "Open"),    # Open Selection
 					"  Filter: ",
-					actionButton("fltToday", "Today") ), # Filter Today
+					actionButton("fltToday", "Today"),   # Filter Today
+					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
 				fluidRow(
 					checkboxInput("chkRegex", "Regex Search: Data", value = TRUE)
 				)
