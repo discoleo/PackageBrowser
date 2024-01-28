@@ -20,8 +20,13 @@ url.cran = function(x) {
 ### Filters
 as.filter = function(x, expand = TRUE, isRegex = TRUE) {
 	if(is.null(x)) return(x);
-	if(expand && isRegex) x = paste0(x, "[a-z]*")
+	if(expand && isRegex) x = paste0(x, "[a-z]*");
 	data.frame(Flt = x, Regex = isRegex, Date = Sys.time());
+}
+strip.filter = function(x) {
+	n = nchar(x);
+	n = pmax(0, n - 6);
+	substr(x, 1, n);
 }
 
 as.filter.tbl = function(x, date = NULL) {

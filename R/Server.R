@@ -91,9 +91,19 @@ server.app = function(input, output, session) {
 		# print(input$tblData_search_columns[[2]]);
 		if(flt == "") return();
 		fltLast = values$fltHist$Flt;
-		fltLast = tail(fltLast, 1);
-		if(flt == fltLast) return();
-		values$fltHist = rbind(values$fltHist, as.filter(flt));
+		len = length(fltLast);
+		if(len == 0) {
+			values$fltHist = as.filter(flt);
+			return();
+		}
+		fltLast = fltLast[len];
+		# if(flt == fltLast) return();
+		if( ! is.na(pmatch(strip.filter(fltLast), flt))) {
+			# does NOT catch all variants of newly typed input!
+			values$fltHist[len, ] = as.filter(flt);
+		} else {
+			values$fltHist = rbind(values$fltHist, as.filter(flt));
+		}
 	})
 	
 	### Tables
