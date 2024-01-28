@@ -42,7 +42,9 @@ getUI = function() {
 					actionButton("fltToday", "Today"),   # Filter Today
 					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
 				fluidRow(
-					checkboxInput("chkRegex", "Regex Search: Data", value = TRUE)
+					"Data Table: ",
+					checkboxInput("chkRegex", "Regex Search", value = TRUE),
+					checkboxInput("chkCase", "Case Insensitive", value = TRUE),
 				)
 		),
 		tabPanel("Words", # icon = icon("Words"),

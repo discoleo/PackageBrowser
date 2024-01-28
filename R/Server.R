@@ -16,7 +16,9 @@ server.app = function(input, output, session) {
 		fullData  = NULL,   # Initial Data
 		fltData   = NULL,   # Filtered Data
 		flt       = NULL,   # Active Filter
-		fltHist   = as.filter(filter.regex)   # Filter History
+		fltHist   = as.filter(filter.regex),   # Filter History
+		fltRegex  = TRUE,
+		fltCaseInsens = TRUE  # Filter: Case Insensitive
 	);
 	
 	# Reset Filters on Data table
@@ -68,7 +70,9 @@ server.app = function(input, output, session) {
 			));
 			return();
 		}
-		browseURL(url.cran(values$fullData$Package[id][1]));
+		len = length(id); # use last selected item;
+		if(len > 1) print("Multiple selection!");
+		browseURL(url.cran(values$fullData$Package[id][len]));
 	})
 	### Filter: Today
 	observeEvent(input$fltToday, {
@@ -87,8 +91,14 @@ server.app = function(input, output, session) {
 	
 	### Options: Data
 	observeEvent(input$chkRegex, {
-		isReg = input$chkRegex;
-		values$reg.Data = isReg;
+		isRegex = input$chkRegex;
+		values$fltRegex = isRegex;
+		values$flt = input$tblData_search_columns;
+		output$tblData = DT::renderDT(dataTable());
+	})
+	observeEvent(input$chkCase, {
+		isCaseIns = input$chkCase;
+		values$fltCaseInsens = isCaseIns;
 		values$flt = input$tblData_search_columns;
 		output$tblData = DT::renderDT(dataTable());
 	})
@@ -122,7 +132,8 @@ server.app = function(input, output, session) {
 		reset.tab();
 		flt = as.filter.tbl(values$flt, date=date);
 		DT::datatable(values$fullData, filter = 'top',
-			options = option.regex(values$reg.Data, varia = flt));
+			options = option.regex(values$fltRegex, varia = flt,
+				caseInsens = values$fltCaseInsens));
 	})
 	
 	# Words
@@ -131,13 +142,13 @@ server.app = function(input, output, session) {
 		cat("Rows: ", nrow(x), "\n");
 		sW = as.words(x);
 		DT::datatable(sW, filter = 'top',
-			options = option.regex(values$reg.Data));
+			options = option.regex(values$fltRegex));
 	})
 	
 	# Filter History
 	output$tblFltHistory = DT::renderDT({
 		DT::datatable(values$fltHist, filter = 'top',
-			options = option.regex(values$reg.Data));
+			options = option.regex(values$fltRegex));
 	})
 	
 	### Help
