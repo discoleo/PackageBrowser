@@ -104,6 +104,8 @@ server.app = function(input, output, session) {
 		} else {
 			values$fltHist = rbind(values$fltHist, as.filter(flt));
 		}
+		# Reset Selection:
+		selectRows(dataTableProxy('tblData'), NULL);
 	})
 	
 	### Tables

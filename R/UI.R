@@ -38,6 +38,7 @@ getUI = function() {
 					actionButton("downloadPkgs", "All"), # All CRAN
 					"  Open selection: ",
 					actionButton("openPkgs", "Open"),    # Open Selection
+					"  Filter: ",
 					actionButton("fltToday", "Today") ), # Filter Today
 				fluidRow(
 					checkboxInput("chkRegex", "Regex Search: Data", value = TRUE)
