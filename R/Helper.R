@@ -4,12 +4,36 @@ read.html = function(url = NULL) {
 		url = "https://cran.r-project.org/web/packages/available_packages_by_date.html";
 	}
 	doc = rvest::read_html(url);
-	
-	x  = doc |> rvest::html_node("table") |> rvest::html_table();
+	x   = doc |> rvest::html_node("table") |> rvest::html_table();
+	print("Finished downloading.");
+	# Date:
 	dt = as.POSIXlt(x$Date, tz = "GMT");
 	x$Date = NULL;
 	x$Date = as.Date(dt);
 	# x$H    = dt$hour;
+	return(x);
+}
+read.html2 = function(url = NULL, name = "Last modified", idCols = NULL, filter = TRUE) {
+	doc = rvest::read_html(url);
+	x = doc |> rvest::html_node("table") |> rvest::html_table();
+	print("Finished downloading.");
+	x = as.data.frame(x); # as.POSIXlt fails with tibble;
+	if(! is.null(idCols)) x = x[, idCols];
+	# Date:
+	id = match(name, names(x));
+	if(is.na(id)) {
+		warning("Invalid column name!");
+		print(str(x));
+	}
+	if(filter) {
+		idF = which(is.na(x[, id]) | x[, id] == "");
+		cat("Filtered: ", idF, "\n");
+		x = x[ - idF, ]; # skip "Parent Directory"
+	}
+	dt = as.POSIXlt(x[, id], tz = "GMT");
+	x[, id] = NULL;
+	x$Date  = as.Date(dt);
+	# x$H   = dt$hour;
 	return(x);
 }
 url.cran = function(x) {

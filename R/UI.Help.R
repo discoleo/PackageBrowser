@@ -17,6 +17,9 @@ help.Pkg = function() {
 		
 			<h2>History Tab</h2>
 			<p>Displays the Search history. Some predefined search terms are included.</p>
+		
+			<h2>Archived Tab</h2>
+			<p>Displays archived packages. It may take a few seconds to download the data.</p>
 		</div>"
 	);
 }

@@ -7,7 +7,8 @@ getServer = function(x) {
 server.app = function(input, output, session) {
 	# Global Options
 	options = list(
-		url = NULL
+		url = NULL,
+		urlArchive = "https://cran.r-project.org/src/contrib/Archive/"
 	);
 	
 	# Dynamic variable
@@ -151,6 +152,18 @@ server.app = function(input, output, session) {
 	# Filter History
 	output$tblFltHistory = DT::renderDT({
 		DT::datatable(values$fltHist, filter = 'top',
+			options = option.regex(values$fltRegex));
+	})
+	
+	# Archived Packages
+	output$tblArchived = DT::renderDT({
+		if(is.null(values$fullData)) return();
+		x = read.html2(options$urlArchive, idCols = c(2,3));
+		x$Name = substr(x$Name, 1, nchar(x$Name) - 1);
+		nms = setdiff(x$Name, values$fullData$Package);
+		ids = match(nms, x$Name);
+		x   = x[ids, ];
+		DT::datatable(x, filter = 'top',
 			options = option.regex(values$fltRegex));
 	})
 	
