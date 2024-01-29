@@ -43,8 +43,9 @@ getUI = function() {
 					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
 				fluidRow(
 					"Data Table: ",
+					downloadButton("savePkgs", "Save"), # Save List of Packages
 					checkboxInput("chkRegex", "Regex Search", value = TRUE),
-					checkboxInput("chkCase", "Case Insensitive", value = TRUE),
+					checkboxInput("chkCase", "Case Insensitive", value = TRUE)
 				)
 		),
 		tabPanel("Words", # icon = icon("Words"),

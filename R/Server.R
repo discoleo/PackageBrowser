@@ -37,13 +37,16 @@ server.app = function(input, output, session) {
 			values$flt    = input$tblData_search_columns;;
 		}
 	})
-	filter.byTable = function() {
+	filter.byTable0 = function() {
 		id = input$tblData_rows_all;
 		if(is.null(id)) {
-			values$fltData = values$fullData;
+			values$fullData;
 		} else {
-			values$fltData = values$fullData[id, ];
+			values$fullData[id, ];
 		}
+	}
+	filter.byTable = function() {
+		values$fltData = filter.byTable0();
 	}
 	#
 	option.regex = function(x, varia = NULL, caseInsens = TRUE) {
@@ -150,6 +153,18 @@ server.app = function(input, output, session) {
 		DT::datatable(values$fltHist, filter = 'top',
 			options = option.regex(values$fltRegex));
 	})
+	
+	### Save Packages
+	output$savePkgs = downloadHandler(
+		filename = function() {
+			paste("Packages.", as.Date(Sys.time()), ".csv", sep = "");
+		},
+		content = function(file) {
+			x = filter.byTable0();
+			if(is.null(x)) return(NULL);
+			write.csv(x, file, row.names = FALSE);
+		}
+	)
 	
 	### Help
 	output$txtHelp <- renderUI({
