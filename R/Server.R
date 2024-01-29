@@ -168,14 +168,6 @@ server.app = function(input, output, session) {
 	
 	### Help
 	output$txtHelp <- renderUI({
-		HTML("<div>
-			<h2>All Packages on CRAN</h2>
-			<p>The titles of all packages available on CRAN are downloaded by pressing the <b>All</b> button.
-				The computer must be connected to the internet!</p>
-			<h2>Open a Specific Package</h2>
-			<p>Select 1 package from the table by clicking on the respective row.
-				Click the <b?Open</> button and the specific CRAN web page will be opened.</p>
-			</div>"
-		)
+		help.Pkg();
 	})
 }
