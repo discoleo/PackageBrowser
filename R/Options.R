@@ -18,7 +18,9 @@ filter.regex = c(
 	"model",
 	"solve",
 	"prot(?!o|ec)",
-	"min(?<!deter...)(?:i(?![-ms ])|e(?!sc))",
-	"pubmed"
+	"min(?<!deter...)(?:i(?![-ms ])|e(?!sc))", # mining|mine
+	"pubmed",
+	"vac(?<!pri...)", # vaccine vs privacy
+	"anti(?![ltcf])"
 )
 
