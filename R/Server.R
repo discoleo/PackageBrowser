@@ -16,6 +16,7 @@ server.app = function(input, output, session) {
 		Active    = "Not",  # Active Tab
 		fullData  = NULL,   # Initial Data
 		fltData   = NULL,   # Filtered Data
+		dfSearch  = NULL,
 		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex),   # Filter History
 		fltRegex  = TRUE,
@@ -68,17 +69,24 @@ server.app = function(input, output, session) {
 	### Open Package Page
 	observeEvent(input$openPkgs, {
 		id = input$tblData_rows_selected;
-		if(is.null(id)) {
+		openPackage(id, values$fullData);
+	})
+	observeEvent(input$openPkgsAdv, {
+		id = input$tblSearch_rows_selected;
+		openPackage(id, values$dfSearch);
+	})
+	openPackage = function(idRows, tbl) {
+		if(is.null(idRows)) {
 			showModal(modalDialog(
 				title = "Nothing selected! Please select first a package.",
 				easyClose = TRUE, footer = NULL
 			));
 			return();
 		}
-		len = length(id); # use last selected item;
+		len = length(idRows); # use last selected item;
 		if(len > 1) print("Multiple selection!");
-		browseURL(url.cran(values$fullData$Package[id][len]));
-	})
+		browseURL(url.cran(tbl$Package[idRows][len]));
+	}
 	### Filter: Today
 	observeEvent(input$fltToday, {
 		values$flt = input$tblData_search_columns;
@@ -138,14 +146,17 @@ server.app = function(input, output, session) {
 			print("Nothing to search!");
 			return();
 		}
-		txt = unlist(strsplit(txt, "\n+"));
-		if(values$fltCaseInsensAdv) txt = paste0("(?i)", txt);
+		txt = as.regex(txt, values$fltCaseInsensAdv);
+		# print(txt); # Debug
 		#
 		isT = TRUE;
-		for(reg in txt) {
-			isT = isT & grepl(reg, values$fltData$Title, perl = TRUE);
+		for(id in seq_along(txt$Regex)) {
+			isR = grepl(txt$Regex[id], values$fltData$Title, perl = TRUE);
+			if(txt$Neg[id]) isR = ! isR;
+			isT = isT & isR;
 		}
 		x = values$fltData[isT, , drop = FALSE];
+		values$dfSearch = x;
 		output$tblSearch = DT::renderDT(
 			DT::datatable(x, filter = 'top',
 				options = option.regex(values$fltRegex)));

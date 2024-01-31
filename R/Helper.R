@@ -74,6 +74,21 @@ as.filter.tbl = function(x, date = NULL) {
 	return(flt);
 }
 
+as.regex = function(x, isCaseInsens = TRUE) {
+	txt = unlist(strsplit(x, "\n+"));
+	# Empty lines:
+	len = nchar(txt);
+	idEmpty = which(len == 0);
+	if(length(idEmpty) > 0) txt = txt[ - idEmpty];
+	# Negation:
+	isNeg = substr(txt, 1, 1) == "!";
+	idNeg = which(isNeg);
+	txt[idNeg] = substr(txt[idNeg], 2, len[idNeg]);
+	# Case:
+	if(isCaseInsens) txt = paste0("(?i)", txt);
+	return(list(Regex = txt, Neg = isNeg));
+}
+
 as.words = function(x) {
 	sW = strsplit(x, "[ ,\t\n'\"()/]+");
 	sW = table(unlist(sW));

@@ -21,6 +21,7 @@ filter.regex = c(
 	"min(?<!deter...)(?:i(?![-ms ])|e(?!sc))", # mining|mine
 	"pubmed",
 	"vac(?<!pri...)", # vaccine vs privacy
-	"anti(?![ltcf])"
+	"anti(?![ltcf])",
+	"model\n!mix\n!linear" # What else is there?
 )
 

@@ -36,7 +36,8 @@ getUI = function() {
 				fluidRow(
 					"Load from CRAN: ",
 					actionButton("downloadPkgs", "All"), # All CRAN
-					"  Open selection: ",
+					HTML("<span style=\"color:#FF0000;padding:12px;\">
+						|  Open selection: </span>"),
 					actionButton("openPkgs", "Open"),    # Open Selection
 					"  Filter: ",
 					actionButton("fltToday", "Today"),   # Filter Today
