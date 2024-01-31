@@ -16,7 +16,7 @@ server.app = function(input, output, session) {
 		Active    = "Not",  # Active Tab
 		fullData  = NULL,   # Initial Data
 		fltData   = NULL,   # Filtered Data
-		dfSearch  = NULL,
+		dfSearch  = NULL,   # Data filtered by Advanced Search
 		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex),   # Filter History
 		fltRegex  = TRUE,
@@ -48,6 +48,14 @@ server.app = function(input, output, session) {
 			values$fullData[id, ];
 		}
 	}
+	filter.byTableSearch = function() {
+		id = input$tblSearch_rows_all;
+		if(is.null(id)) {
+			values$dfSearch;
+		} else {
+			values$dfSearch[id, ];
+		}
+	}
 	filter.byTable = function() {
 		values$fltData = filter.byTable0();
 	}
@@ -75,18 +83,7 @@ server.app = function(input, output, session) {
 		id = input$tblSearch_rows_selected;
 		openPackage(id, values$dfSearch);
 	})
-	openPackage = function(idRows, tbl) {
-		if(is.null(idRows)) {
-			showModal(modalDialog(
-				title = "Nothing selected! Please select first a package.",
-				easyClose = TRUE, footer = NULL
-			));
-			return();
-		}
-		len = length(idRows); # use last selected item;
-		if(len > 1) print("Multiple selection!");
-		browseURL(url.cran(tbl$Package[idRows][len]));
-	}
+	
 	### Filter: Today
 	observeEvent(input$fltToday, {
 		values$flt = input$tblData_search_columns;
@@ -140,23 +137,9 @@ server.app = function(input, output, session) {
 	
 	### Advanced Search
 	observeEvent(input$btnSearch, {
-		txt = input$inputSearch;
-		if(txt == "" || nrow(values$fltData) == 0) {
-			# TODO
-			print("Nothing to search!");
-			return();
-		}
-		txt = as.regex(txt, values$fltCaseInsensAdv);
-		# print(txt); # Debug
-		#
-		isT = TRUE;
-		for(id in seq_along(txt$Regex)) {
-			isR = grepl(txt$Regex[id], values$fltData$Title, perl = TRUE);
-			if(txt$Neg[id]) isR = ! isR;
-			isT = isT & isR;
-		}
-		x = values$fltData[isT, , drop = FALSE];
-		values$dfSearch = x;
+		txtRegex = input$inputSearch;
+		x = filter.tbl(txtRegex, values$fltData, values$fltCaseInsensAdv);
+		values$dfSearch  = x;
 		output$tblSearch = DT::renderDT(
 			DT::datatable(x, filter = 'top',
 				options = option.regex(values$fltRegex)));
@@ -207,6 +190,16 @@ server.app = function(input, output, session) {
 		},
 		content = function(file) {
 			x = filter.byTable0();
+			if(is.null(x)) return(NULL);
+			write.csv(x, file, row.names = FALSE);
+		}
+	)
+	output$savePkgsAdv = downloadHandler(
+		filename = function() {
+			paste("Packages.", as.Date(Sys.time()), ".csv", sep = "");
+		},
+		content = function(file) {
+			x = filter.byTableSearch();
 			if(is.null(x)) return(NULL);
 			write.csv(x, file, row.names = FALSE);
 		}

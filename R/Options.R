@@ -18,10 +18,12 @@ filter.regex = c(
 	"model",
 	"solve",
 	"prot(?!o|ec)",
+	"(?<!mis)cell", # Cells
 	"min(?<!deter...)(?:i(?![-ms ])|e(?!sc))", # mining|mine
 	"pubmed",
 	"vac(?<!pri...)", # vaccine vs privacy
 	"anti(?![ltcf])",
-	"model\n!mix\n!linear" # What else is there?
+	# TODO: What else is there?
+	"model\n!mix\n!linear"
 )
 

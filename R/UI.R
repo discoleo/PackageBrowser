@@ -55,8 +55,10 @@ getUI = function() {
 					" Insert multiple Search terms: 1 term per line! ", width = "100%", rows = 3)),
 				column(2, fluidRow(HTML("&nbsp;")),
 					fluidRow(actionButton("btnSearch", "Search")), # Advanced Search
+					downloadButton("savePkgsAdv", "Save"), # Save List of Packages
+					"Save Table",
 					actionButton("openPkgsAdv", "Open"), # Open Selection
-					"<= Open selection"
+					"Open selection"
 				),
 				column(5, "TODO")
 			),

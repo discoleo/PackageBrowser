@@ -41,7 +41,42 @@ url.cran = function(x) {
 			x, "/index.html");
 }
 
+### Package CRAN page
+# - Open in new window
+openPackage = function(idRows, tbl) {
+	if(is.null(idRows)) {
+		showModal(modalDialog(
+			title = "Nothing selected! Please select first a package.",
+			easyClose = TRUE, footer = NULL
+		));
+		return();
+	}
+	len = length(idRows); # use last selected item;
+	if(len > 1) print("Multiple selection!");
+	browseURL(url.cran(tbl$Package[idRows][len]));
+}
+
 ### Filters
+
+filter.tbl = function(pattern, data, isCaseInsens = TRUE) {
+	txt = pattern;
+	if(txt == "" || nrow(data) == 0) {
+			# TODO
+			print("Nothing to search!");
+			return();
+		}
+		txt = as.regex(txt, isCaseInsens);
+		# print(txt); # Debug
+		#
+		isT = TRUE;
+		for(id in seq_along(txt$Regex)) {
+			isR = grepl(txt$Regex[id], data$Title, perl = TRUE);
+			if(txt$Neg[id]) isR = ! isR;
+			isT = isT & isR;
+		}
+		data[isT, , drop = FALSE];
+}
+
 as.filter = function(x, expand = TRUE, isRegex = TRUE) {
 	if(is.null(x)) return(x);
 	if(expand && isRegex) x = paste0(x, "[a-z]*");
