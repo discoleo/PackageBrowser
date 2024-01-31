@@ -19,7 +19,8 @@ server.app = function(input, output, session) {
 		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex),   # Filter History
 		fltRegex  = TRUE,
-		fltCaseInsens = TRUE  # Filter: Case Insensitive
+		fltCaseInsens = TRUE,  # Filter: Case Insensitive
+		fltCaseInsensAdv = TRUE
 	);
 	
 	# Reset Filters on Data table
@@ -127,6 +128,27 @@ server.app = function(input, output, session) {
 		}
 		# Reset Selection:
 		selectRows(dataTableProxy('tblData'), NULL);
+	})
+	
+	### Advanced Search
+	observeEvent(input$btnSearch, {
+		txt = input$inputSearch;
+		if(txt == "" || nrow(values$fltData) == 0) {
+			# TODO
+			print("Nothing to search!");
+			return();
+		}
+		txt = unlist(strsplit(txt, "\n+"));
+		if(values$fltCaseInsensAdv) txt = paste0("(?i)", txt);
+		#
+		isT = TRUE;
+		for(reg in txt) {
+			isT = isT & grepl(reg, values$fltData$Title, perl = TRUE);
+		}
+		x = values$fltData[isT, , drop = FALSE];
+		output$tblSearch = DT::renderDT(
+			DT::datatable(x, filter = 'top',
+				options = option.regex(values$fltRegex)));
 	})
 	
 	### Tables

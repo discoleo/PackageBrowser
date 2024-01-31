@@ -48,6 +48,19 @@ getUI = function() {
 					checkboxInput("chkCase", "Case Insensitive", value = TRUE)
 				)
 		),
+		tabPanel("Search", # icon = icon("Search"),
+			fluidRow(
+				column(5, textAreaInput("inputSearch",
+					" Insert multiple Search terms: 1 term per line! ", width = "100%", rows = 3)),
+				column(2, fluidRow(HTML("&nbsp;")),
+					fluidRow(actionButton("btnSearch", "Search")), # Advanced Search
+					actionButton("openPkgsAdv", "Open"), # Open Selection
+					"<= Open selection"
+				),
+				column(5, "TODO")
+			),
+			fluidRow(DT::DTOutput("tblSearch"))
+		),
 		tabPanel("Words", # icon = icon("Words"),
 				fluidRow(DT::DTOutput("tblWords"))
 		),
