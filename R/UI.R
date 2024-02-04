@@ -71,7 +71,8 @@ getUI = function() {
 				fluidRow(DT::DTOutput("tblFltHistory"))
 		),
 		tabPanel("Archived", # icon = icon("Archived"),
-				fluidRow(DT::DTOutput("tblArchived"))
+				fluidRow(DT::DTOutput("tblArchived")),
+				fluidRow(actionButton("openPkgsArch", "Open"))   # Open Selection
 		),
 		tabPanel("Help", # icon = icon("Help"),
 				uiOutput("txtHelp")

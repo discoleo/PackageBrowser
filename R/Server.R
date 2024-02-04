@@ -13,10 +13,11 @@ server.app = function(input, output, session) {
 	
 	# Dynamic variable
 	values = reactiveValues(
-		Active    = "Not",  # Active Tab
-		fullData  = NULL,   # Initial Data
-		fltData   = NULL,   # Filtered Data
-		dfSearch  = NULL,   # Data filtered by Advanced Search
+		Active     = "Not", # Active Tab
+		fullData   = NULL,  # Initial Data
+		fltData    = NULL,  # Filtered Data
+		dfSearch   = NULL,  # Data filtered by Advanced Search
+		dfArchived = NULL,  # Archived Packages
 		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex),   # Filter History
 		fltRegex  = TRUE,
@@ -171,16 +172,29 @@ server.app = function(input, output, session) {
 			options = option.regex(values$fltRegex));
 	})
 	
+	readArchive = function() {
+		if(is.null(values$fullData)) return();
+		print("Reading Archive");
+		x = read.html2(options$urlArchive, idCols = c(2,3));
+		names(x)[1] = "Package";
+		x$Package = substr(x$Package, 1, nchar(x$Package) - 1);
+		nms = setdiff(x$Package, values$fullData$Package);
+		ids = match(nms, x$Package);
+		x   = x[ids, ];
+		values$dfArchived = x;
+	}
+	
 	# Archived Packages
 	output$tblArchived = DT::renderDT({
-		if(is.null(values$fullData)) return();
-		x = read.html2(options$urlArchive, idCols = c(2,3));
-		x$Name = substr(x$Name, 1, nchar(x$Name) - 1);
-		nms = setdiff(x$Name, values$fullData$Package);
-		ids = match(nms, x$Name);
-		x   = x[ids, ];
+		readArchive();
+		x = values$dfArchived;
+		if(is.null(x)) return();
 		DT::datatable(x, filter = 'top',
 			options = option.regex(values$fltRegex));
+	})
+	observeEvent(input$openPkgsArch, {
+		id = input$tblArchived_rows_selected;
+		openPackage(id, values$dfArchived);
 	})
 	
 	### Save Packages
