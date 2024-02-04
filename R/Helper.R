@@ -1,4 +1,12 @@
 
+### Helper Functions
+
+# TODO:
+# - evaluate biterm topics:
+#   https://cran.r-project.org/web/packages/BTM/index.html
+
+
+### Read HTML
 read.html = function(url = NULL) {
 	if(is.null(url)) {
 		url = "https://cran.r-project.org/web/packages/available_packages_by_date.html";
@@ -115,6 +123,7 @@ as.regex = function(x, isCaseInsens = TRUE) {
 	len = nchar(txt);
 	idEmpty = which(len == 0);
 	if(length(idEmpty) > 0) txt = txt[ - idEmpty];
+	if(length(txt) == 0) return(list(Regex = "", Neg = FALSE));
 	# Negation:
 	isNeg = substr(txt, 1, 1) == "!";
 	idNeg = which(isNeg);
