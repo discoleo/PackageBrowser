@@ -178,8 +178,9 @@ server.app = function(input, output, session) {
 		x = read.html2(options$urlArchive, idCols = c(2,3));
 		names(x)[1] = "Package";
 		x$Package = substr(x$Package, 1, nchar(x$Package) - 1);
-		nms = setdiff(x$Package, values$fullData$Package);
-		ids = match(nms, x$Package);
+		# nms = setdiff(x$Package, values$fullData$Package);
+		# ids = match(nms, x$Package);
+		ids = match(x$Package, values$fullData$Package, 0L) == 0L;
 		x   = x[ids, ];
 		values$dfArchived = x;
 	}
@@ -190,7 +191,8 @@ server.app = function(input, output, session) {
 		x = values$dfArchived;
 		if(is.null(x)) return();
 		DT::datatable(x, filter = 'top',
-			options = option.regex(values$fltRegex));
+			options = option.regex(values$fltRegex,
+				varia = list(order = list(2, "desc"))));
 	})
 	observeEvent(input$openPkgsArch, {
 		id = input$tblArchived_rows_selected;
