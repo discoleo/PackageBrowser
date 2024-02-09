@@ -72,7 +72,11 @@ getUI = function() {
 		),
 		tabPanel("Archived", # icon = icon("Archived"),
 				fluidRow(DT::DTOutput("tblArchived")),
-				fluidRow(actionButton("openPkgsArch", "Open"))   # Open Selection
+				fluidRow(
+					"Open selected: ",
+					actionButton("openPkgsArch", "Open")),   # Open Selection
+				fluidRow("Note: the page with packages is downloaded automatically,
+					but it may take a few seconds!")
 		),
 		tabPanel("Help", # icon = icon("Help"),
 				uiOutput("txtHelp")
