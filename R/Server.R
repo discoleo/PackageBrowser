@@ -17,6 +17,7 @@ server.app = function(input, output, session) {
 		fullData   = NULL,  # Initial Data
 		fltData    = NULL,  # Filtered Data
 		dfSearch   = NULL,  # Data filtered by Advanced Search
+		dfReverse  = NULL,  # Reverse Dependencies
 		dfArchived = NULL,  # Archived Packages
 		flt       = NULL,   # Active Filter
 		fltHist   = as.filter(filter.regex),   # Filter History
@@ -24,6 +25,11 @@ server.app = function(input, output, session) {
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE
 	);
+	
+	getSelected = function(nameTable) {
+		if( ! is.character(nameTable)) warning("Wrong table name!");
+		id = input[[paste0(nameTable, "_rows_selected")]];
+	}
 	
 	# Reset Filters on Data table
 	hasData = function() { ! is.null(values$fullData); }
@@ -137,6 +143,22 @@ server.app = function(input, output, session) {
 	})
 	
 	### Advanced Search
+	observeEvent(input$btnReverse, {
+		id = getSelected("tblData");
+		if(is.null(id)) return();
+		# Last Selected
+		len = length(id);
+		id  = id[len];
+		pkg = values$fullData$Package[id];
+		#
+		x = read.reverseDependencies(pkg);
+		values$dfReverse  = x;
+		output$tblReverse = DT::renderDT(
+			DT::datatable(x, filter = 'top',
+				options = option.regex(values$fltRegex)));
+	})
+	
+	### Advanced Search
 	observeEvent(input$btnSearch, {
 		txtRegex = input$inputSearch;
 		x = filter.tbl(txtRegex, values$fltData, values$fltCaseInsensAdv);
@@ -150,7 +172,7 @@ server.app = function(input, output, session) {
 	
 	# Data
 	dataTable = function(date = NULL) ({
-		reset.tab();
+		reset.tab(); # ???
 		flt = as.filter.tbl(values$flt, date=date);
 		DT::datatable(values$fullData, filter = 'top',
 			options = option.regex(values$fltRegex, varia = flt,

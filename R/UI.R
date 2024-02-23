@@ -39,7 +39,9 @@ getUI = function() {
 					HTML("<span style=\"color:#FF0000;padding:12px;\">
 						|  Open selection: </span>"),
 					actionButton("openPkgs", "Open"),    # Open Selection
-					"  Filter: ",
+					actionButton("btnReverse", "Reverse"),  # Reverse Dependencies
+					HTML("<span style=\"color:#0000FF;padding:12px;\">
+						|  Filter: </span>"),
 					actionButton("fltToday", "Today"),   # Filter Today
 					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
 				fluidRow(
@@ -47,7 +49,8 @@ getUI = function() {
 					downloadButton("savePkgs", "Save"), # Save List of Packages
 					checkboxInput("chkRegex", "Regex Search", value = TRUE),
 					checkboxInput("chkCase", "Case Insensitive", value = TRUE)
-				)
+				),
+				fluidRow(DT::DTOutput("tblReverse"))
 		),
 		tabPanel("Search", # icon = icon("Search"),
 			fluidRow(

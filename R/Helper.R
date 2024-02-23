@@ -12,7 +12,7 @@ read.html = function(url = NULL) {
 		url = "https://cran.r-project.org/web/packages/available_packages_by_date.html";
 	}
 	doc = rvest::read_html(url);
-	x   = doc |> rvest::html_node("table") |> rvest::html_table();
+	x   = doc |> rvest::html_element("table") |> rvest::html_table();
 	print("Finished downloading.");
 	# Date:
 	dt = as.POSIXlt(x$Date, tz = "GMT");
@@ -23,7 +23,7 @@ read.html = function(url = NULL) {
 }
 read.html2 = function(url = NULL, name = "Last modified", idCols = NULL, filter = TRUE) {
 	doc = rvest::read_html(url);
-	x = doc |> rvest::html_node("table") |> rvest::html_table();
+	x = doc |> rvest::html_element("table") |> rvest::html_table();
 	print("Finished downloading.");
 	x = as.data.frame(x); # as.POSIXlt fails with tibble;
 	if(! is.null(idCols)) x = x[, idCols];
@@ -47,6 +47,17 @@ read.html2 = function(url = NULL, name = "Last modified", idCols = NULL, filter 
 url.cran = function(x) {
 	paste0("https://cran.r-project.org/web/packages/",
 			x, "/index.html");
+}
+
+read.reverseDependencies = function(pkg) {
+	url = url.cran(pkg);
+	doc = rvest::read_html(url);
+	x   = doc |> rvest::html_elements(
+			xpath = "//table[tr/td/text()[contains(., 'Reverse')]]");
+	# print(as.character(x));
+	x = rvest::html_table(x);
+	x = as.data.frame(x);
+	return(x);
 }
 
 ### Package CRAN page
