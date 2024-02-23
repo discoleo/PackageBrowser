@@ -30,6 +30,13 @@ server.app = function(input, output, session) {
 		if( ! is.character(nameTable)) warning("Wrong table name!");
 		id = input[[paste0(nameTable, "_rows_selected")]];
 	}
+	data.MessageStart = function() {
+		data.frame(Package = "Press the *All* button below to download the table of packages from CRAN.");
+	}
+	tblMessageDownload = function() {
+		DT::datatable(data.MessageStart(),
+			options = option.regex(TRUE, varia = list(dom = "t")));
+	}
 	
 	# Reset Filters on Data table
 	hasData = function() { ! is.null(values$fullData); }
@@ -145,7 +152,10 @@ server.app = function(input, output, session) {
 	### Advanced Search
 	observeEvent(input$btnReverse, {
 		id = getSelected("tblData");
-		if(is.null(id)) return();
+		if(is.null(id)) {
+			values$dfReverse = NULL;
+			return();
+		}
 		# Last Selected
 		len = length(id);
 		id  = id[len];
@@ -172,7 +182,10 @@ server.app = function(input, output, session) {
 	
 	# Data
 	dataTable = function(date = NULL) ({
-		reset.tab(); # ???
+		# reset.tab(); # ???
+		if(is.null(values$fullData)) {
+			return(tblMessageDownload());
+		}
 		flt = as.filter.tbl(values$flt, date=date);
 		DT::datatable(values$fullData, filter = 'top',
 			options = option.regex(values$fltRegex, varia = flt,

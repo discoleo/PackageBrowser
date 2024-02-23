@@ -1,10 +1,10 @@
 Package: PackageBrowser
 Title: Interactive Shiny App to Browse and Filter R Packages
-Version: 0.2.1
+Version: 0.2.2
 Authors@R:
     person("Leonard", "Mada", "leo.mada@syonic.eu", role = c("aut", "cre"))
 Depends: shiny, DT, rvest
-Description: Shiny web app to browse through the CRAN packages. Enables filtering using regex expressions.
+Description: Shiny web app to browse through all CRAN packages. Enables filtering using regex expressions.
 License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
