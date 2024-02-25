@@ -15,7 +15,7 @@ read.html = function(url = NULL) {
 	x   = doc |> rvest::html_element("table") |> rvest::html_table();
 	print("Finished downloading.");
 	# Date:
-	dt = as.POSIXlt(x$Date, tz = "GMT");
+	dt = as.POSIXlt(x$Date, tz = "GMT", format = "%Y-%m-%d");
 	x$Date = NULL;
 	x$Date = as.Date(dt);
 	# x$H    = dt$hour;
@@ -38,7 +38,7 @@ read.html2 = function(url = NULL, name = "Last modified", idCols = NULL, filter 
 		cat("Filtered: ", idF, "\n");
 		x = x[ - idF, ]; # skip "Parent Directory"
 	}
-	dt = as.POSIXlt(x[, id], tz = "GMT");
+	dt = as.POSIXlt(x[, id], tz = "GMT", format = "%Y-%m-%d");
 	x[, id] = NULL;
 	x$Date  = as.Date(dt);
 	# x$H   = dt$hour;
