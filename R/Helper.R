@@ -96,17 +96,29 @@ filter.tbl = function(pattern, data, isCaseInsens = TRUE) {
 		data[isT, , drop = FALSE];
 }
 
-as.filter = function(x, expand = TRUE, isRegex = TRUE) {
+### Filter History
+as.filter.df = function(x) {
+	x$Flt[ ! x$ML] = paste0(x$Flt[ ! x$ML], "[a-z]*");
+	data.frame(Flt = x$Flt, ML = x$ML,
+		Regex = x$Regex, Date = Sys.time());
+}
+# ML = multi-line filter;
+as.filter = function(x, expand = TRUE, isRegex = TRUE, isML = FALSE) {
 	if(is.null(x)) return(x);
-	if(expand && isRegex) x = paste0(x, "[a-z]*");
-	data.frame(Flt = x, Regex = isRegex, Date = Sys.time());
+	if(expand && isRegex && ! isML) {
+		x = paste0(x, "[a-z]*");
+	}
+	data.frame(Flt = x, ML = isML,
+		Regex = isRegex, Date = Sys.time());
 }
 strip.filter = function(x) {
+	# "[a-z]*"
 	n = nchar(x);
 	n = pmax(0, n - 6);
 	substr(x, 1, n);
 }
 
+### Table Filters
 as.filter.tbl = function(x, date = NULL) {
 	flt = x;
 	if( ! is.null(flt)) {
