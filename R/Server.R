@@ -134,22 +134,24 @@ server.app = function(input, output, session) {
 		fltLast = values$fltHist$Flt;
 		len = length(fltLast);
 		if(len == 0) {
-			values$fltHist = as.filter(flt);
+			values$fltHist = as.filter(flt, isRegex = values$fltRegex);
 			return();
 		}
 		fltLast = fltLast[len];
+		fltNew  = as.filter(flt, isRegex = values$fltRegex);
 		# if(flt == fltLast) return();
+		# TODO: strip only if ! ML;
 		if( ! is.na(pmatch(strip.filter(fltLast), flt))) {
 			# does NOT catch all variants of newly typed input!
-			values$fltHist[len, ] = as.filter(flt);
+			values$fltHist[len, ] = fltNew;
 		} else {
-			values$fltHist = rbind(values$fltHist, as.filter(flt));
+			values$fltHist = rbind(values$fltHist, fltNew);
 		}
 		# Reset Selection:
 		selectRows(dataTableProxy('tblData'), NULL);
 	})
 	
-	### Advanced Search
+	### Reverse Dependencies
 	observeEvent(input$btnReverse, {
 		id = getSelected("tblData");
 		if(is.null(id)) {
@@ -169,20 +171,22 @@ server.app = function(input, output, session) {
 	})
 	
 	### Advanced Search
+	# Note: currently reuses values$fltRegex;
 	observeEvent(input$btnSearch, {
 		txtRegex = input$inputSearch;
 		x = filter.tbl(txtRegex, values$fltData, values$fltCaseInsensAdv);
+		fltNew = as.filter(txtRegex, isRegex = values$fltRegex, isML = TRUE);
+		values$fltHist = rbind(values$fltHist, fltNew);
 		values$dfSearch  = x;
 		output$tblSearch = DT::renderDT(
 			DT::datatable(x, filter = 'top',
-				options = option.regex(values$fltRegex)));
+				options = option.regex(values$fltRegex, varia = list(dom = "tipl"))));
 	})
 	
 	### Tables
 	
 	# Data
 	dataTable = function(date = NULL) ({
-		# reset.tab(); # ???
 		if(is.null(values$fullData)) {
 			return(tblMessageDownload());
 		}
@@ -207,6 +211,7 @@ server.app = function(input, output, session) {
 			options = option.regex(values$fltRegex));
 	})
 	
+	# Archived Packages
 	readArchive = function() {
 		if(is.null(values$fullData)) return();
 		print("Reading Archive");
