@@ -77,25 +77,6 @@ openPackage = function(idRows, tbl) {
 
 ### Filters
 
-filter.tbl = function(pattern, data, isCaseInsens = TRUE) {
-	txt = pattern;
-	if(txt == "" || nrow(data) == 0) {
-			# TODO
-			print("Nothing to search!");
-			return();
-		}
-		txt = as.regex(txt, isCaseInsens);
-		# print(txt); # Debug
-		#
-		isT = TRUE;
-		for(id in seq_along(txt$Regex)) {
-			isR = grepl(txt$Regex[id], data$Title, perl = TRUE);
-			if(txt$Neg[id]) isR = ! isR;
-			isT = isT & isR;
-		}
-		data[isT, , drop = FALSE];
-}
-
 ### Filter History
 as.filter.df = function(x) {
 	x$Flt[ ! x$ML] = paste0(x$Flt[ ! x$ML], "[a-z]*");
@@ -119,6 +100,26 @@ strip.filter = function(x) {
 }
 
 ### Table Filters
+
+filter.tbl = function(pattern, data, isCaseInsens = TRUE) {
+	txt = pattern;
+	if(txt == "" || nrow(data) == 0) {
+			# TODO
+			print("Nothing to search!");
+			return();
+		}
+		txt = as.regex(txt, isCaseInsens);
+		# print(txt); # Debug
+		#
+		isT = TRUE;
+		for(id in seq_along(txt$Regex)) {
+			isR = grepl(txt$Regex[id], data$Title, perl = TRUE);
+			if(txt$Neg[id]) isR = ! isR;
+			isT = isT & isR;
+		}
+		data[isT, , drop = FALSE];
+}
+
 as.filter.tbl = function(x, date = NULL) {
 	flt = x;
 	if( ! is.null(flt)) {
