@@ -156,16 +156,3 @@ as.regex = function(x, isCaseInsens = TRUE) {
 	if(isCaseInsens) txt = paste0("(?i)", txt);
 	return(list(Regex = txt, Neg = isNeg));
 }
-
-as.words = function(x) {
-	sW = strsplit(x, "[ ,\t\n'\"()/]+");
-	sW = table(unlist(sW));
-	sW = as.data.frame(sW, stringsAsFactors = FALSE);
-	names(sW)[1] = "Word";
-	# Stop-words
-	isStop = sW$Word %in% wordsStop;
-	sW = sW[ ! isStop, ];
-	#
-	sW$Len = nchar(sW$Word);
-	return(sW);
-}
