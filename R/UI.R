@@ -80,6 +80,7 @@ getUI = function() {
 			fluidRow(
 				actionButton("btnGotoWord", "Page"),
 				actionButton("btnViewByWord", "View"),
+				actionButton("btnOpenPkgWord", "Open"),
 			),
 			# Packages containing selected word;
 			fluidRow(DT::DTOutput("tblPkgsWords")),

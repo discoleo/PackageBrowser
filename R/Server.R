@@ -18,9 +18,10 @@ server.app = function(input, output, session) {
 	values = reactiveValues(
 		ActiveTab  = "Not", # Active Tab
 		fullData   = NULL,  # Initial Data
-		fltData    = NULL,  # Filtered Data
+		dfFltData  = NULL,  # Filtered Data
 		dfSearch   = NULL,  # Data filtered by Advanced Search
 		dfWords    = NULL,  # Words in Titles
+		dfPkgWords = NULL,  # Packages containing specific Word;
 		dfReverse  = NULL,  # Reverse Dependencies
 		dfArchived = NULL,  # Archived Packages
 		flt        = NULL,  # Active Filter
@@ -93,7 +94,7 @@ server.app = function(input, output, session) {
 		}
 	}
 	filter.byTable = function() {
-		values$fltData = filter.byTable0();
+		values$dfFltData = filter.byTable0();
 	}
 	#
 	option.regex = function(x, varia = NULL, caseInsens = TRUE) {
@@ -109,7 +110,7 @@ server.app = function(input, output, session) {
 			url   = options$url,
 			strip = options$title.stripWords);
 		values$flt     = NULL;
-		values$fltData = values$fullData;
+		values$dfFltData = values$fullData;
 		reset.tab();
 	})
 	### Open Package Page
@@ -198,7 +199,7 @@ server.app = function(input, output, session) {
 	# Note: currently reuses values$fltRegex;
 	observeEvent(input$btnSearch, {
 		txtRegex = input$inputSearch;
-		x = filter.tbl(txtRegex, values$fltData, values$fltCaseInsensAdv);
+		x = filter.tbl(txtRegex, values$dfFltData, values$fltCaseInsensAdv);
 		fltNew = as.filter(txtRegex, isRegex = values$fltRegex, isML = TRUE);
 		values$fltHist = rbind(values$fltHist, fltNew);
 		values$dfSearch  = x;
@@ -222,7 +223,7 @@ server.app = function(input, output, session) {
 	
 	### Words
 	output$tblWords = DT::renderDT({
-		x = values$fltData$Title;
+		x = values$dfFltData$Title;
 		cat("Rows: ", length(x), "\n");
 		sW = as.words(x);
 		values$dfWords = sW;
@@ -257,14 +258,27 @@ server.app = function(input, output, session) {
 	})
 	
 	observeEvent(input$btnViewByWord, {
-		x  = values$fltData;
+		x  = values$dfFltData;
 		if(is.null(x)) return();
 		id = input$tblWords_rows_selected;
 		if(length(id) == 0) return();
 		sWords = values$dfWords$Word[id];
 		idPkg  = getPkgsByWord(sWords, x);
 		x = x[idPkg, ];
-		output$tblPkgsWords = DT::renderDT(asDT(x, dom = "tip"));
+		values$dfPkgWords = x;
+	})
+	output$tblPkgsWords = DT::renderDT({
+		x = values$dfPkgWords;
+		if(is.null(x)) return();
+		asDT(x, dom = "tip")
+	});
+	
+	# Open Selected Package
+	observeEvent(input$btnOpenPkgWord, {
+		x  = values$dfPkgWords;
+		if(is.null(x)) return();
+		id = input$tblPkgsWords_rows_selected;
+		openPackage(id, x);
 	})
 	
 	getPkgsByWord = function(w, x) {
