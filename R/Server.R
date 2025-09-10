@@ -53,6 +53,8 @@ server.app = function(input, output, session) {
 		if( ! is.character(nameTable)) warning("Wrong table name!");
 		id = input[[paste0(nameTable, "_rows_selected")]];
 	}
+	# Main Message:
+	# Note: as table (inside table);
 	data.MessageStart = function() {
 		data.frame(Package = "Press the *All* button below to download the table of packages from CRAN.");
 	}
@@ -227,8 +229,7 @@ server.app = function(input, output, session) {
 		cat("Rows: ", length(x), "\n");
 		sW = as.words(x);
 		values$dfWords = sW;
-		DT::datatable(sW, filter = 'top',
-			options = option.regex(values$fltRegex));
+		asDT(sW, dom = "tpil");
 	})
 	
 	getWordPage = function() {

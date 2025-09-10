@@ -25,6 +25,16 @@ sliderInput = function(...) shiny::sliderInput(...);
 selectInput = function(...) shiny::selectInput(...);
 checkboxInput = function(...) shiny::checkboxInput(...);
 
+text.html = function(x, col, pad = 12) {
+	if(! is.null(pad)) {
+		if(is.numeric(pad)) pad = paste0(pad, "px");
+		pad = paste0(pad, collapse = " ");
+		pad = paste0("padding: ", pad, ";");
+	}
+	html = paste0("<span style=\"color:", col, ";",
+		pad, "\">", x, "</span>");
+	HTML(html);
+}
 
 getUI = function() {
 	shiny::shinyUI(
@@ -36,12 +46,10 @@ getUI = function() {
 				fluidRow(
 					"Load from CRAN: ",
 					actionButton("downloadPkgs", "All"), # All CRAN
-					HTML("<span style=\"color:#FF0000;padding:12px;\">
-						|  Open selection: </span>"),
+					text.html(" |  Open selection: ", col = "#FF0000"),
 					actionButton("openPkgs", "Open"),    # Open Selection
 					actionButton("btnReverse", "Reverse"), # Reverse Dependencies
-					HTML("<span style=\"color:#0000FF;padding:12px;\">
-						|  Filter: </span>"),
+					text.html(" |  Filter: ", col = "#0000FF"),
 					actionButton("fltToday", "Today"),   # Filter Today
 					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
 				fluidRow(
