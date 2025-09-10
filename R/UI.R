@@ -39,7 +39,7 @@ getUI = function() {
 					HTML("<span style=\"color:#FF0000;padding:12px;\">
 						|  Open selection: </span>"),
 					actionButton("openPkgs", "Open"),    # Open Selection
-					actionButton("btnReverse", "Reverse"),  # Reverse Dependencies
+					actionButton("btnReverse", "Reverse"), # Reverse Dependencies
 					HTML("<span style=\"color:#0000FF;padding:12px;\">
 						|  Filter: </span>"),
 					actionButton("fltToday", "Today"),   # Filter Today
@@ -72,18 +72,23 @@ getUI = function() {
 			fluidRow(
 			column(6, fluidRow(DT::DTOutput("tblWords"))),
 			column(6,
-			HTML("<div style='padding: 0px 0px 0px 20px;'>"),
+			# Padding: <top, right, bottom, left>
+			HTML("<div style='padding: 0px 0px 10px 20px;'>"),
 			fluidRow(
 				textInput("inPageTblWords", "GoTo Word/Page:"),
 			),
-			fluidRow(actionButton("btnGotoWord", "Page")),
+			fluidRow(
+				actionButton("btnGotoWord", "Page"),
+				actionButton("btnViewByWord", "View"),
+			),
+			# Packages containing selected word;
 			fluidRow(DT::DTOutput("tblPkgsWords")),
 			HTML("</div>")
 			),
 			),
 		),
 		tabPanel("History", # icon = icon("History"),
-				fluidRow(DT::DTOutput("tblFltHistory"))
+			fluidRow(DT::DTOutput("tblFltHistory"))
 		),
 		tabPanel("Archived", # icon = icon("Archived"),
 				fluidRow(DT::DTOutput("tblArchived")),

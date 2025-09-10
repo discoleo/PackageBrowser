@@ -32,6 +32,18 @@ server.app = function(input, output, session) {
 		NULLARG = NULL
 	);
 	
+	asDT = function(x, filter = "top", dom = NULL, regex = NULL) {
+		# Options:
+		varia = NULL;
+		if(! is.null(dom)) varia = list(dom = dom);
+		if(is.null(regex)) regex = values$fltRegex;
+		opt = option.regex(regex, varia = varia);
+		if(is.null(filter)) {
+			DT::datatable(x, options = opt);
+		} else {
+			DT::datatable(x, filter = filter, options = opt);
+		}
+	}
 	setPage = function(pg, tbl) {
 		proxy = dataTableProxy(tbl);
 		selectPage(proxy, pg);
@@ -208,7 +220,7 @@ server.app = function(input, output, session) {
 				caseInsens = values$fltCaseInsens));
 	})
 	
-	# Words
+	### Words
 	output$tblWords = DT::renderDT({
 		x = values$fltData$Title;
 		cat("Rows: ", length(x), "\n");
@@ -243,6 +255,27 @@ server.app = function(input, output, session) {
 		if(is.null(pg) || pg == 0) return();
 		setPage(pg, 'tblWords');
 	})
+	
+	observeEvent(input$btnViewByWord, {
+		x  = values$fltData;
+		if(is.null(x)) return();
+		id = input$tblWords_rows_selected;
+		if(length(id) == 0) return();
+		sWords = values$dfWords$Word[id];
+		idPkg  = getPkgsByWord(sWords, x);
+		x = x[idPkg, ];
+		output$tblPkgsWords = DT::renderDT(asDT(x, dom = "tip"));
+	})
+	
+	getPkgsByWord = function(w, x) {
+		# TODO: better quoting;
+		w = paste0("\\Q", w, "\\E");
+		w = paste0(w, collapse = "|");
+		w = paste0("(?i)", w);
+		id = grepl(w, x$Title);
+		id = which(id);
+		return(id);
+	}
 	
 	# Filter History
 	output$tblFltHistory = DT::renderDT({
