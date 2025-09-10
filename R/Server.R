@@ -7,8 +7,10 @@ getServer = function(x) {
 server.app = function(input, output, session) {
 	# Global Options
 	options = list(
-		url = NULL,
-		urlArchive = "https://cran.r-project.org/src/contrib/Archive/"
+		url = NULL,  # use/override url hardcoded in function read.html();
+		urlArchive = "https://cran.r-project.org/src/contrib/Archive/",
+		title.stripWords = c("^A +"),
+		NULLARG = NULL
 	);
 	
 	# Dynamic variable
@@ -19,9 +21,9 @@ server.app = function(input, output, session) {
 		dfSearch   = NULL,  # Data filtered by Advanced Search
 		dfReverse  = NULL,  # Reverse Dependencies
 		dfArchived = NULL,  # Archived Packages
-		flt       = NULL,   # Active Filter
-		fltHist   = as.filter.df(filter.regex),   # Filter History
-		fltRegex  = TRUE,
+		flt        = NULL,   # Active Filter
+		fltHist    = as.filter.df(filter.regex),   # Filter History
+		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE
 	);
@@ -83,7 +85,9 @@ server.app = function(input, output, session) {
 	
 	### Web Download
 	observeEvent(input$downloadPkgs, {
-		values$fullData = read.html(url = options$url);
+		values$fullData = read.html(
+			url   = options$url,
+			strip = options$title.stripWords);
 		values$flt      = NULL;
 		# filter.byTable();
 		values$fltData = values$fullData;

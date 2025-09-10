@@ -7,7 +7,7 @@
 
 
 ### Read HTML
-read.html = function(url = NULL) {
+read.html = function(url = NULL, strip = NULL) {
 	if(is.null(url)) {
 		url = "https://cran.r-project.org/web/packages/available_packages_by_date.html";
 	}
@@ -19,6 +19,12 @@ read.html = function(url = NULL) {
 	x$Date = NULL;
 	x$Date = as.Date(dt);
 	# x$H    = dt$hour;
+	if(! is.null(strip) && length(strip) > 0) {
+		if(length(strip) > 1) {
+			warning("Strip multiple tokens: NOT yet implemented!");
+		}
+		x$Title = gsub(strip, "", x$Title);
+	}
 	return(x);
 }
 read.html2 = function(url = NULL, name = "Last modified", idCols = NULL, filter = TRUE) {
