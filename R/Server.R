@@ -10,24 +10,32 @@ server.app = function(input, output, session) {
 		url = NULL,  # use/override url hardcoded in function read.html();
 		urlArchive = "https://cran.r-project.org/src/contrib/Archive/",
 		title.stripWords = c("^A +"),
+		fltRegCaseInsens_Words = TRUE,
 		NULLARG = NULL
 	);
 	
 	# Dynamic variable
 	values = reactiveValues(
-		Active     = "Not", # Active Tab
+		ActiveTab  = "Not", # Active Tab
 		fullData   = NULL,  # Initial Data
 		fltData    = NULL,  # Filtered Data
 		dfSearch   = NULL,  # Data filtered by Advanced Search
+		dfWords    = NULL,  # Words in Titles
 		dfReverse  = NULL,  # Reverse Dependencies
 		dfArchived = NULL,  # Archived Packages
-		flt        = NULL,   # Active Filter
+		flt        = NULL,  # Active Filter
 		fltHist    = as.filter.df(filter.regex),   # Filter History
 		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
-		fltCaseInsensAdv = TRUE
+		fltCaseInsensAdv = TRUE,
+		pageWord   = 0,
+		NULLARG = NULL
 	);
 	
+	setPage = function(pg, tbl) {
+		proxy = dataTableProxy(tbl);
+		selectPage(proxy, pg);
+	}
 	getSelected = function(nameTable) {
 		if( ! is.character(nameTable)) warning("Wrong table name!");
 		id = input[[paste0(nameTable, "_rows_selected")]];
@@ -43,17 +51,17 @@ server.app = function(input, output, session) {
 	# Reset Filters on Data table
 	hasData = function() { ! is.null(values$fullData); }
 	reset.tab = function() {
-		if(values$Active != "Data" && hasData()) {
-			values$Active  = "Data";
+		if(values$ActiveTab != "Data" && hasData()) {
+			values$ActiveTab  = "Data";
 		}
 	}
 	
 	observeEvent(input$menu.top, {
-		if(values$Active == "Data") {
+		if(values$ActiveTab == "Data") {
 			print("Switched away from Data!");
 			filter.byTable();
-			values$Active = "Other";
-			values$flt    = input$tblData_search_columns;;
+			values$ActiveTab = "Other";
+			values$flt = input$tblData_search_columns;;
 		}
 	})
 	filter.byTable0 = function() {
@@ -88,9 +96,9 @@ server.app = function(input, output, session) {
 		values$fullData = read.html(
 			url   = options$url,
 			strip = options$title.stripWords);
-		values$flt      = NULL;
-		# filter.byTable();
+		values$flt     = NULL;
 		values$fltData = values$fullData;
+		reset.tab();
 	})
 	### Open Package Page
 	observeEvent(input$openPkgs, {
@@ -203,10 +211,37 @@ server.app = function(input, output, session) {
 	# Words
 	output$tblWords = DT::renderDT({
 		x = values$fltData$Title;
-		cat("Rows: ", nrow(x), "\n");
+		cat("Rows: ", length(x), "\n");
 		sW = as.words(x);
+		values$dfWords = sW;
 		DT::datatable(sW, filter = 'top',
 			options = option.regex(values$fltRegex));
+	})
+	
+	getWordPage = function() {
+		val = input$inPageTblWords;
+		if(is.null(val) || nchar(val) == 0) return(0);
+		isNum = grepl("^[0-9]", val);
+		if(isNum) {
+			pg = as.integer(val);
+			if(is.na(pg)) return(0);
+		} else {
+			if(options$fltRegCaseInsens_Words) {
+				val = paste0("(?i)", val);
+			}
+			val = grepl(val, values$dfWords$Word);
+			pg  = which(val);
+			if(length(pg) == 0) return(0);
+			pg = pg[1];
+			pg = (pg - 1) %/% 10 + 1;
+		}
+		values$pageWord = pg;
+	}
+	observeEvent(input$btnGotoWord, {
+		pg = getWordPage();
+		values$pageWord = pg;
+		if(is.null(pg) || pg == 0) return();
+		setPage(pg, 'tblWords');
 	})
 	
 	# Filter History

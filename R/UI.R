@@ -67,8 +67,20 @@ getUI = function() {
 			),
 			fluidRow(DT::DTOutput("tblSearch"))
 		),
+		### Words in Title
 		tabPanel("Words", # icon = icon("Words"),
-				fluidRow(DT::DTOutput("tblWords"))
+			fluidRow(
+			column(6, fluidRow(DT::DTOutput("tblWords"))),
+			column(6,
+			HTML("<div style='padding: 0px 0px 0px 20px;'>"),
+			fluidRow(
+				textInput("inPageTblWords", "GoTo Word/Page:"),
+			),
+			fluidRow(actionButton("btnGotoWord", "Page")),
+			fluidRow(DT::DTOutput("tblPkgsWords")),
+			HTML("</div>")
+			),
+			),
 		),
 		tabPanel("History", # icon = icon("History"),
 				fluidRow(DT::DTOutput("tblFltHistory"))
