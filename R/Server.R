@@ -24,7 +24,7 @@ server.app = function(input, output, session) {
 		dfPkgWords = NULL,  # Packages containing specific Word;
 		dfReverse  = NULL,  # Reverse Dependencies
 		dfArchived = NULL,  # Archived Packages
-		flt        = NULL,  # Active Filter
+		fltMain    = NULL,  # Active Filter
 		fltHist    = as.filter.df(filter.regex),   # Filter History
 		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
@@ -74,7 +74,7 @@ server.app = function(input, output, session) {
 			print("Switched away from Data!");
 			filter.byTable();
 			values$ActiveTab = "Other";
-			values$flt = input$tblData_search_columns;;
+			values$fltMain   = input$tblData_search_columns;;
 		}
 	})
 	filter.byTable0 = function() {
@@ -109,7 +109,7 @@ server.app = function(input, output, session) {
 		values$fullData = read.html(
 			url   = options$url,
 			strip = options$title.stripWords);
-		values$flt     = NULL;
+		values$fltMain   = NULL;
 		values$dfFltData = values$fullData;
 		reset.tab();
 	})
@@ -125,14 +125,14 @@ server.app = function(input, output, session) {
 	
 	### Filter: Today
 	observeEvent(input$fltToday, {
-		values$flt = input$tblData_search_columns;
+		values$fltMain = input$tblData_search_columns;
 		dt = as.Date(Sys.time());
 		dt = c(dt, dt);
 		output$tblData = DT::renderDT(dataTable(date = dt));
 	})
 	### Filter: 1 Week
 	observeEvent(input$fltWeek, {
-		values$flt = input$tblData_search_columns;
+		values$fltMain = input$tblData_search_columns;
 		dt = as.Date(Sys.time());
 		dt = c(dt - 7, dt);
 		output$tblData = DT::renderDT(dataTable(date = dt));
@@ -142,13 +142,13 @@ server.app = function(input, output, session) {
 	observeEvent(input$chkRegex, {
 		isRegex = input$chkRegex;
 		values$fltRegex = isRegex;
-		values$flt = input$tblData_search_columns;
+		values$fltMain = input$tblData_search_columns;
 		output$tblData = DT::renderDT(dataTable());
 	})
 	observeEvent(input$chkCase, {
 		isCaseIns = input$chkCase;
 		values$fltCaseInsens = isCaseIns;
-		values$flt = input$tblData_search_columns;
+		values$fltMain = input$tblData_search_columns;
 		output$tblData = DT::renderDT(dataTable());
 	})
 	### Filters
@@ -215,7 +215,7 @@ server.app = function(input, output, session) {
 		if(is.null(values$fullData)) {
 			return(tblMessageDownload());
 		}
-		flt = as.filter.tbl(values$flt, date=date);
+		flt = as.filter.tbl(values$fltMain, date=date);
 		DT::datatable(values$fullData, filter = 'top',
 			options = option.regex(values$fltRegex, varia = flt,
 				caseInsens = values$fltCaseInsens));
