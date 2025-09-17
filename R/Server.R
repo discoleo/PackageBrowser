@@ -72,13 +72,23 @@ server.app = function(input, output, session) {
 	}
 	
 	observeEvent(input$menu.top, {
-		if(values$ActiveTab == "Data") {
+		thisTab = input$menu.top;
+		prevTab = values$ActiveTab;
+		if(prevTab == "Data") {
+			if(thisTab == "Data") return();
 			print("Switched away from Data!");
+			# Filter only once:
 			filter.byTable();
 			values$ActiveTab = "Other";
-			values$fltMain   = input$tblData_search_columns;;
+			# if(! is.null(values$fltMain))
+			#	values$fltMain = input$tblData_search_columns;
+		} else if(thisTab == "Data") {
+			values$ActiveTab = "Data";
 		}
 	})
+	filter.byTable = function() {
+		values$dfFltData = filter.byTable0();
+	}
 	filter.byTable0 = function() {
 		id = input$tblData_rows_all;
 		if(is.null(id)) {
@@ -94,9 +104,6 @@ server.app = function(input, output, session) {
 		} else {
 			values$dfSearch[id, ];
 		}
-	}
-	filter.byTable = function() {
-		values$dfFltData = filter.byTable0();
 	}
 	#
 	option.regex = function(x, varia = NULL, caseInsens = TRUE) {
