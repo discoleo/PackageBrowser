@@ -146,6 +146,42 @@ server.app = function(input, output, session) {
 		dt = c(dt - 7, dt);
 		output$tblData = DT::renderDT(dataTable(date = dt));
 	})
+	### Filter: 1 Month
+	observeEvent(input$fltMonth, {
+		values$fltMain = input$tblData_search_columns;
+		dt = as.Date(Sys.time());
+		# TODO: proper month;
+		dt = c(dt - 28, dt);
+		output$tblData = DT::renderDT(dataTable(date = dt));
+	})
+	
+	### GoTo
+	observeEvent(input$btnGOTO, {
+		tbl = values$dfFltData;
+		if(is.null(tbl)) return();
+		val = input$inGOTO;
+		if(is.null(val) || nchar(val) == 0) return();
+		#
+		isNum = grepl("^[0-9]+$", val);
+		if(isNum) {
+			pg = as.integer(val);
+		} else {
+			# First Letter:
+			if(nchar(val) == 1) val = paste0("^", val);
+			if(options$fltRegCaseInsens_Words) {
+				val = paste0("(?i)", val);
+			}
+			id  = input$tblData_rows_all;
+			sTt = tbl$Title[id];
+			val = grepl(val, sTt);
+			pg  = which(val);
+			if(length(pg) == 0) return();
+			pg = pg[1];
+			pg = (pg - 1) %/% 10 + 1;
+		}
+		setPage(pg, 'tblData');
+	})
+	
 	
 	### Options: Data
 	observeEvent(input$chkRegex, {
@@ -210,7 +246,7 @@ server.app = function(input, output, session) {
 		txtRegex = input$inputSearch;
 		x = filter.tbl(txtRegex, values$dfFltData, values$fltCaseInsensAdv);
 		fltNew = as.filter(txtRegex, isRegex = values$fltRegex, isML = TRUE);
-		values$fltHist = rbind(values$fltHist, fltNew);
+		values$fltHist   = rbind(values$fltHist, fltNew);
 		values$dfSearch  = x;
 		output$tblSearch = DT::renderDT(
 			DT::datatable(x, filter = 'top',

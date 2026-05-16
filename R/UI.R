@@ -35,6 +35,12 @@ text.html = function(x, col, pad = 12) {
 		pad, "\">", x, "</span>");
 	HTML(html);
 }
+# Inline DIV:
+divi = function(x, width = 160, pad.l = 30) {
+	div(x, style = paste0("display: inline-block; ",
+		"padding-left: ", pad.l, "px;",
+		"width: ", width, "px;"));
+}
 
 getUI = function() {
 	shiny::shinyUI(
@@ -48,15 +54,21 @@ getUI = function() {
 					actionButton("downloadPkgs", "All"), # All CRAN
 					text.html(" |  Open selection: ", col = "#FF0000"),
 					actionButton("openPkgs", "Open"),    # Open Selection
-					actionButton("btnReverse", "Reverse"), # Reverse Dependencies
+					actionButton("btnReverse", "Rev Dep"), # Reverse Dependencies
 					text.html(" |  Filter: ", col = "#0000FF"),
 					actionButton("fltToday", "Today"),   # Filter Today
-					actionButton("fltWeek", "1 Week") ), # Filter 1 Week
+					actionButton("fltWeek", "1 Week"),   # Filter 1 Week
+					actionButton("fltMonth", "1 Month"), # Filter 1 Month
+					# GoTo:
+					text.html(" | Word/Page: ", col = "#A0A032"),
+					divi(textInput("inGOTO", "", width = "80px"), width = 90, 10),
+					actionButton("btnGOTO", "GoTo"),   # GoTo: Page / Text
+					),
 				fluidRow(
 					"Data Table: ",
-					downloadButton("savePkgs", "Save"), # Save List of Packages
-					checkboxInput("chkRegex", "Regex Search", value = TRUE),
-					checkboxInput("chkCase", "Case Insensitive", value = TRUE)
+					downloadButton("savePkgs", "Save"),  # Save List of Packages
+					divi(checkboxInput("chkRegex", "Regex Search", value = TRUE)),
+					divi(checkboxInput("chkCase", "Case Insensitive", value = TRUE)),
 				),
 				fluidRow(DT::DTOutput("tblReverse"))
 		),
