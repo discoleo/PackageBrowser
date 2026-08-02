@@ -162,3 +162,32 @@ as.regex = function(x, isCaseInsens = TRUE) {
 	if(isCaseInsens) txt = paste0("(?i)", txt);
 	return(list(Regex = txt, Neg = isNeg));
 }
+
+######################
+######################
+
+### Installed Packages
+
+# fields=c("Repository", "Description", "Imports", "Date")
+ls.pkg = function(pkg=NULL, fields=c("Date", "Repository")) {
+	if(! is.null(fields)) {
+		all.pkg = installed.packages(fields=fields);
+	} else {
+		all.pkg = installed.packages();
+	}
+	if(is.null(pkg)) {
+		pkg = all.pkg;
+	} else {
+		pkg = all.pkg[all.pkg[,1] %in% pkg, , drop = FALSE];
+	}
+	if(nrow(pkg) == 0) {
+		warning("No packages!");
+		return(data.frame("Package" = character(0)));
+	}
+	p = pkg;
+	p = as.data.frame(p);
+	p = p[ , c("Package", "Version", "Built", fields)];
+	names(p)[match("Date", names(p))] = "Date (I)";
+	rownames(p) = NULL;
+	return(p);
+}

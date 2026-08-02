@@ -4,6 +4,10 @@ getServer = function(x) {
 	shiny::shinyServer(server.app)
 }
 
+### DT Tables:
+# dom = "tipl"
+# t = Table;  = Info; p = Pagination; l = Length ???;
+
 server.app = function(input, output, session) {
 	# Global Options
 	options = list(
@@ -29,6 +33,7 @@ server.app = function(input, output, session) {
 		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE,
+		pkgsInstalled = NULL, # Installed Packages
 		pageWord   = 0,
 		NULLARG = NULL
 	);
@@ -264,6 +269,30 @@ server.app = function(input, output, session) {
 		DT::datatable(values$fullData, filter = 'top',
 			options = option.regex(values$fltRegex, varia = flt,
 				caseInsens = values$fltCaseInsens));
+	})
+	
+	### Installed Packages
+	output$tblPkgsInstalled = DT::renderDT({
+		pkgs = values$pkgsInstalled;
+		if(is.null(pkgs)) {
+			pkgs = ls.pkg();
+			cat("Finished reading Installed packages.\n");
+			values$pkgsInstalled = pkgs;
+		}
+		if(nrow(pkgs) == 0) return();
+		# Merge w. CRAN:
+		pkgs = merge(pkgs, values$fullData, by = "Package", all.x = TRUE);
+		ids  = match(c("Date (I)", "Repository"), names(pkgs));
+		pkgs = cbind(pkgs[- ids], pkgs[ids]);
+		# Table:
+		DT::datatable(pkgs, filter = 'top',
+			options = option.regex(values$fltRegex,
+				varia = list(dom = "tip\nl"),
+				caseInsens = values$fltCaseInsens));
+	})
+	observeEvent(input$btnUpdatePkgs, {
+		values$pkgsInstalled = ls.pkg();
+		cat("Finished reading Installed packages.\n");
 	})
 	
 	### Words

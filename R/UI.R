@@ -48,8 +48,8 @@ getUI = function() {
 	shiny::navbarPage("Package-Browser", id="menu.top",
 		# theme = init.theme(),
 		tabPanel("Data", # icon = icon("upload file"),
-				fluidRow(DT::DTOutput("tblData")),
-				fluidRow(
+			fluidRow(DT::DTOutput("tblData")),
+			fluidRow(
 					"Load from CRAN: ",
 					actionButton("downloadPkgs", "All"), # All CRAN
 					text.html(" |  Open selection: ", col = "#FF0000"),
@@ -63,14 +63,22 @@ getUI = function() {
 					text.html(" | Word/Page: ", col = "#A0A032"),
 					divi(textInput("inGOTO", "", width = "80px"), width = 90, 10),
 					actionButton("btnGOTO", "GoTo"),   # GoTo: Page / Text
-					),
-				fluidRow(
+				),
+			fluidRow(
 					"Data Table: ",
 					downloadButton("savePkgs", "Save"),  # Save List of Packages
 					divi(checkboxInput("chkRegex", "Regex Search", value = TRUE)),
 					divi(checkboxInput("chkCase", "Case Insensitive", value = TRUE)),
-				),
-				fluidRow(DT::DTOutput("tblReverse"))
+			),
+			fluidRow(DT::DTOutput("tblReverse"))
+		),	
+		tabPanel("Installed", # icon = icon("Installed"),
+			h1("Installed Packages:"),
+			fluidRow(style = "padding-bottom:14px; padding-left:20px;",
+			actionButton("btnUpdatePkgs", "Update"),    # Update Installed Packages
+			),
+			fluidRow(DT::DTOutput("tblPkgsInstalled")),
+			fluidRow(style = "padding-bottom:12px;"),
 		),
 		tabPanel("Search", # icon = icon("Search"),
 			fluidRow(

@@ -1,6 +1,7 @@
 Package: PackageBrowser
 Title: Interactive Shiny App to Browse and Filter R Packages
-Version: 0.3.0
+Version: 0.3.5
+Date: 2026-08-02
 Authors@R:
     person("Leonard", "Mada", "lmada@umft.ro", role = c("aut", "cre"))
 Depends: shiny, DT, rvest
