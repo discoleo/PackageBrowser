@@ -169,7 +169,7 @@ as.regex = function(x, isCaseInsens = TRUE) {
 ### Installed Packages
 
 # fields=c("Repository", "Description", "Imports", "Date")
-ls.pkg = function(pkg=NULL, fields=c("Date", "Repository")) {
+ls.pkg = function(pkg=NULL, fields=c("Date", "Date/Publication", "Repository")) {
 	if(! is.null(fields)) {
 		all.pkg = installed.packages(fields=fields);
 	} else {
@@ -186,8 +186,24 @@ ls.pkg = function(pkg=NULL, fields=c("Date", "Repository")) {
 	}
 	p = pkg;
 	p = as.data.frame(p);
+	### Date:
+	# "Date/Publication" => Date;
+	id = match("Date/Publication", fields);
+	id = id[! is.na(id)];
+	hasDateP = length(id) > 0;
+	if(hasDateP) {
+		dtP  = as.POSIXlt(p["Date/Publication"][[1]]);
+		isNA = is.na(dtP);
+		dtP[isNA] = as.POSIXlt(p[isNA, "Date"]);
+		p["Date/Publication"] = NULL;
+		fields = fields[- id];
+	} else {
+		dtP = p$Date;
+	}
+	p$Date = as.Date(dtP);
+	#
+	rownames(p) = NULL;
 	p = p[ , c("Package", "Version", "Built", fields)];
 	names(p)[match("Date", names(p))] = "Date (I)";
-	rownames(p) = NULL;
 	return(p);
 }
