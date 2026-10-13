@@ -73,13 +73,16 @@ getUI = function() {
 			fluidRow(DT::DTOutput("tblReverse"))
 		),	
 		tabPanel("Installed", # icon = icon("Installed"),
-			h1("Installed Packages:"),
 			fluidRow(style = "padding-bottom:14px; padding-left:20px;",
+			column(2,
 			actionButton("btnUpdatePkgs", "Update"),    # Update Installed Packages
+			), column(10,
+			checkboxInput("chkFltNewer", "Newer", value = TRUE), # Newer
 			),
 			fluidRow(DT::DTOutput("tblPkgsInstalled")),
 			fluidRow(style = "padding-bottom:12px;"),
-		),
+			h2("Table with Installed Packages:"),
+		)),
 		tabPanel("Search", # icon = icon("Search"),
 			fluidRow(
 				column(5, textAreaInput("inputSearch",

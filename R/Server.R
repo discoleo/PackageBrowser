@@ -33,6 +33,7 @@ server.app = function(input, output, session) {
 		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE,
+		chkFltNewer   = FALSE, # Filter: Show only newer Packages
 		pkgsInstalled = NULL, # Installed Packages
 		pageWord   = 0,
 		NULLARG = NULL
@@ -284,6 +285,17 @@ server.app = function(input, output, session) {
 		pkgs = merge(pkgs, values$fullData, by = "Package", all.x = TRUE);
 		ids  = match(c("Date (I)", "Repository"), names(pkgs));
 		pkgs = cbind(pkgs[- ids], pkgs[ids]);
+		# Newer Packages
+		if(values$chkFltNewer) {
+			isNewer = pkgs$Date > pkgs[, "Date (I)", drop = TRUE];
+			isNA = is.na(isNewer);
+			if(any(isNA)) {
+				isNewer[isNA] = FALSE;
+				cat("Archived or NOT CRAN packages: ", sum(isNA), "\n");
+			}
+			pkgs = pkgs[isNewer,];
+			if(nrow(pkgs) == 0) cat("NO newer packages!\n");
+		}
 		# Table:
 		DT::datatable(pkgs, filter = 'top',
 			options = option.regex(values$fltRegex,
@@ -293,6 +305,10 @@ server.app = function(input, output, session) {
 	observeEvent(input$btnUpdatePkgs, {
 		values$pkgsInstalled = ls.pkg();
 		cat("Finished reading Installed packages.\n");
+	})
+	# Filter: Only Newer Packages
+	observeEvent(input$chkFltNewer, {
+		values$chkFltNewer = input$chkFltNewer;
 	})
 	
 	### Words
