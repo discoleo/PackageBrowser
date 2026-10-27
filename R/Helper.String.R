@@ -1,5 +1,21 @@
 
 
+# Strip "Quotes" from the beginning;
+stripQuotes = function(x) {
+	idQ = which(substr(x, 1, 1) == "'");
+	if(length(idQ) > 0) {
+		tmp = x[idQ];
+		tmp = substr(tmp, 2, nchar(tmp));
+		x[idQ] = sub("'", "", tmp);
+	}
+	idQ = which(substr(x, 1, 1) == '"');
+	if(length(idQ) > 0) {
+		tmp = x[idQ];
+		tmp = substr(tmp, 2, nchar(tmp));
+		x[idQ] = sub('"', "", tmp);
+	}
+	return(x);
+}
 
 as.words = function(x) {
 	# TODO: doi;

@@ -7,7 +7,7 @@
 
 
 ### Read HTML
-read.html = function(url = NULL, strip = NULL) {
+read.html = function(url = NULL, strip = NULL, stripQuotes = FALSE) {
 	if(is.null(url)) {
 		url = "https://cran.r-project.org/web/packages/available_packages_by_date.html";
 	}
@@ -19,6 +19,9 @@ read.html = function(url = NULL, strip = NULL) {
 	x$Date = NULL;
 	x$Date = as.Date(dt);
 	# x$H    = dt$hour;
+	if(stripQuotes) {
+		x$Title = stripQuotes(x$Title);
+	}
 	if(! is.null(strip) && length(strip) > 0) {
 		if(length(strip) > 1) {
 			warning("Strip multiple tokens: NOT yet implemented!");

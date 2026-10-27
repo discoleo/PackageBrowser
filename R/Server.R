@@ -21,6 +21,8 @@ server.app = function(input, output, session) {
 	# Dynamic variable
 	values = reactiveValues(
 		ActiveTab  = "Not", # Active Tab
+		stripQuotes = TRUE,
+		# Data:
 		fullData   = NULL,  # Initial Data
 		dfFltData  = NULL,  # Filtered Data
 		dfSearch   = NULL,  # Data filtered by Advanced Search
@@ -34,7 +36,7 @@ server.app = function(input, output, session) {
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE,
 		chkFltNewer   = FALSE, # Filter: Show only newer Packages
-		pkgsInstalled = NULL, # Installed Packages
+		pkgsInstalled = NULL,  # Installed Packages
 		pageWord   = 0,
 		NULLARG = NULL
 	);
@@ -123,7 +125,9 @@ server.app = function(input, output, session) {
 	observeEvent(input$downloadPkgs, {
 		values$fullData = read.html(
 			url   = options$url,
-			strip = options$title.stripWords);
+			strip = options$title.stripWords,
+			stripQuotes = values$stripQuotes
+			);
 		values$fltMain   = NULL;
 		values$dfFltData = values$fullData;
 		reset.tab();
