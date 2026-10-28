@@ -101,10 +101,13 @@ getUI = function() {
 		### Words in Title
 		tabPanel("Words", # icon = icon("Words"),
 			fluidRow(
-			column(6, fluidRow(DT::DTOutput("tblWords"))),
-			column(6,
+			# Table w. Words:
+			column(5, fluidRow(DT::DTOutput("tblWords"))),
+			# Right Sub-Panel: Buttons & Options
+			column(7,
 			# Padding: <top, right, bottom, left>
 			HTML("<div style='padding: 0px 0px 10px 20px;'>"),
+			fluidRow(column(6,
 			fluidRow(
 				textInput("inPageTblWords", "GoTo Word/Page:"),
 			),
@@ -112,7 +115,11 @@ getUI = function() {
 				actionButton("btnGotoWord", "Page"),
 				actionButton("btnViewByWord", "View"),
 				actionButton("btnOpenPkgWord", "Open"),
-			),
+			)),
+			column(6,
+				# Options: View must contain whole Word:
+				checkboxInput("chkWord", "Whole word", value = TRUE),
+			)),
 			# Packages containing selected word;
 			fluidRow(DT::DTOutput("tblPkgsWords")),
 			HTML("</div>")

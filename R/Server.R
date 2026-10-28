@@ -35,6 +35,7 @@ server.app = function(input, output, session) {
 		fltRegex   = TRUE,
 		fltCaseInsens = TRUE,  # Filter: Case Insensitive
 		fltCaseInsensAdv = TRUE,
+		fltWholeWord  = TRUE,  # View only exact word;
 		chkFltNewer   = FALSE, # Filter: Show only newer Packages
 		pkgsInstalled = NULL,  # Installed Packages
 		pageWord   = 0,
@@ -350,13 +351,16 @@ server.app = function(input, output, session) {
 		setPage(pg, 'tblWords');
 	})
 	
+	observeEvent(input$chkWord, {
+		values$fltWholeWord = input$chkWord;
+	})
 	observeEvent(input$btnViewByWord, {
 		x  = values$dfFltData;
 		if(is.null(x)) return();
 		id = input$tblWords_rows_selected;
 		if(length(id) == 0) return();
 		sWords = values$dfWords$Word[id];
-		idPkg  = getPkgsByWord(sWords, x);
+		idPkg  = getPkgsByWord(sWords, x, values$fltWholeWord);
 		x = x[idPkg, ];
 		values$dfPkgWords = x;
 	})
@@ -374,12 +378,17 @@ server.app = function(input, output, session) {
 		openPackage(id, x);
 	})
 	
-	getPkgsByWord = function(w, x) {
+	getPkgsByWord = function(w, x, fltWholeWord, perl = FALSE) {
 		# TODO: better quoting;
 		w = paste0("\\Q", w, "\\E");
 		w = paste0(w, collapse = "|");
 		w = paste0("(?i)", w);
-		id = grepl(w, x$Title);
+		if(fltWholeWord) {
+			w = paste0(w, "(?![a-zA-Z])");
+			# TODO: Left-boundary;
+			perl = TRUE;
+		}
+		id = grepl(w, x$Title, perl = perl);
 		id = which(id);
 		return(id);
 	}
