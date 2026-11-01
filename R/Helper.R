@@ -23,10 +23,13 @@ read.html = function(url = NULL, strip = NULL, stripQuotes = FALSE) {
 		x$Title = stripQuotes(x$Title);
 	}
 	if(! is.null(strip) && length(strip) > 0) {
-		if(length(strip) > 1) {
-			warning("Strip multiple tokens: NOT yet implemented!");
+		for(sRef in strip) {
+			x$Title = gsub(sRef, "", x$Title);
 		}
-		x$Title = gsub(strip, "", x$Title);
+		# Inner Quotes may have become visible;
+		if(stripQuotes) {
+			x$Title = stripQuotes(x$Title);
+		}
 	}
 	return(x);
 }
