@@ -39,6 +39,7 @@ server.app = function(input, output, session) {
 		chkFltNewer   = FALSE, # Filter: Show only newer Packages
 		pkgsInstalled = NULL,  # Installed Packages
 		pageWord   = 0,
+		statsType  = "Monthly",  # c("Yearly", "Monthly", "MonthlyAll")
 		NULLARG = NULL
 	);
 	
@@ -399,7 +400,31 @@ server.app = function(input, output, session) {
 			options = option.regex(values$fltRegex));
 	})
 	
-	# Archived Packages
+	### Stats
+	output$tblStats = DT::renderDT({
+		x = values$dfFltData;
+		if(is.null(x)) return();
+		if(values$statsType == "Yearly") {
+			dtPckgs = cut(x$Date, "years");
+		} else if(values$statsType == "MonthlyAll") {
+			dtPckgs = cut(x$Date, "months");
+		} else if(values$statsType == "Monthly") {
+			dtPckgs = x$Date;
+			lastYr  = as.Date(Sys.time()) - 365;
+			dtPckgs = dtPckgs[dtPckgs >= lastYr];
+			dtPckgs = cut(dtPckgs, "months");
+		} else {
+			warning("Invalid Stats!");
+			return();
+		}
+		statsPckgs = data.frame(table(dtPckgs));
+		names(statsPckgs)[1] = "Date";
+		DT::datatable(statsPckgs, filter = 'top',
+			options = option.regex(values$fltRegex,
+				varia = list(order = list(1, "desc"))));
+	})
+	
+	### Archived Packages
 	readArchive = function() {
 		if(is.null(values$fullData)) return();
 		print("Reading Archive");

@@ -129,6 +129,11 @@ getUI = function() {
 		tabPanel("History", # icon = icon("History"),
 			fluidRow(DT::DTOutput("tblFltHistory"))
 		),
+		tabPanel("Stats", # icon = icon("Stats"),
+			column(5, fluidRow(DT::DTOutput("tblStats"))),
+			column(7,
+			)
+		),
 		tabPanel("Archived", # icon = icon("Archived"),
 				fluidRow(DT::DTOutput("tblArchived")),
 				fluidRow(
