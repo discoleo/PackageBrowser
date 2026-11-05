@@ -424,6 +424,11 @@ server.app = function(input, output, session) {
 				varia = list(order = list(1, "desc"))));
 	})
 	
+	# Statistics: Period / Bins
+	observeEvent(input$selStatsPeriod, {
+		values$statsType = input$selStatsPeriod;
+	})
+	
 	### Archived Packages
 	readArchive = function() {
 		if(is.null(values$fullData)) return();

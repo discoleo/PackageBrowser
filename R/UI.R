@@ -122,7 +122,7 @@ getUI = function() {
 			)),
 			# Packages containing selected word;
 			fluidRow(DT::DTOutput("tblPkgsWords")),
-			HTML("</div>")
+			HTML("</div>") # END DIV for Column
 			),
 			),
 		),
@@ -132,6 +132,12 @@ getUI = function() {
 		tabPanel("Stats", # icon = icon("Stats"),
 			column(5, fluidRow(DT::DTOutput("tblStats"))),
 			column(7,
+			# Padding: <top, right, bottom, left>
+			HTML("<div style='padding: 0px 0px 10px 20px;'>"),
+			fluidRow(
+				selectInput("selStatsPeriod", "Period", getStatsPeriods(), selected = "Monthly")
+			),
+			HTML("</div>") # END DIV for Column
 			)
 		),
 		tabPanel("Archived", # icon = icon("Archived"),
@@ -146,4 +152,11 @@ getUI = function() {
 				uiOutput("txtHelp")
 		)
 	)))
+}
+
+getStatsPeriods = function() {
+	c("Yearly" = "Yearly",
+	"Monthly: Last Year" = "Monthly",
+	"Monthly: Whole Period" = "MonthlyAll"
+	);
 }
