@@ -13,8 +13,9 @@ server.app = function(input, output, session) {
 	options = list(
 		url = NULL,  # use/override url hardcoded in function read.html();
 		urlArchive = "https://cran.r-project.org/src/contrib/Archive/",
-		title.stripWords = c("^A +"),
+		title.stripWords = c("^A +", "^An +"),
 		fltRegCaseInsens_Words = TRUE,
+		csv.sep = ",",
 		NULLARG = NULL
 	);
 	
@@ -123,6 +124,8 @@ server.app = function(input, output, session) {
 		return(opt);
 	}
 	
+	### Packages:
+	
 	### Web Download
 	observeEvent(input$downloadPkgs, {
 		values$fullData = read.html(
@@ -130,6 +133,19 @@ server.app = function(input, output, session) {
 			strip = options$title.stripWords,
 			stripQuotes = values$stripQuotes
 			);
+		values$fltMain   = NULL;
+		values$dfFltData = values$fullData;
+		reset.tab();
+	})
+	### Load from CSV
+	observeEvent(input$loadCSV, {
+		file1 = input$loadCSV;
+		if (is.null(file1)) 
+			return(NULL);
+		#
+		x = read.csv(file1$datapath, sep = options$csv.sep);
+		x$Date = as.Date(x$Date);
+		values$fullData  = x;
 		values$fltMain   = NULL;
 		values$dfFltData = values$fullData;
 		reset.tab();

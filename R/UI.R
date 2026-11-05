@@ -70,7 +70,8 @@ getUI = function() {
 					divi(checkboxInput("chkRegex", "Regex Search", value = TRUE)),
 					divi(checkboxInput("chkCase", "Case Insensitive", value = TRUE)),
 			),
-			fluidRow(DT::DTOutput("tblReverse"))
+			fluidRow(fileInput.data("loadCSV", "Load")),
+			fluidRow(fluidRow(DT::DTOutput("tblReverse"))),
 		),	
 		tabPanel("Installed", # icon = icon("Installed"),
 			fluidRow(style = "padding-bottom:14px; padding-left:20px;",
@@ -153,6 +154,17 @@ getUI = function() {
 				uiOutput("txtHelp")
 		)
 	)))
+}
+
+fileInput.data = function(id, label) {
+	accept = c(
+			"text/csv",
+			"text/comma-separated-values",
+			"text/plain", ".csv", ".txt");
+	shiny::fileInput(id, label,
+		multiple = FALSE,
+		accept   = accept
+    );
 }
 
 getStatsPeriods = function() {
