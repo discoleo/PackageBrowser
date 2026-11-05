@@ -419,6 +419,13 @@ server.app = function(input, output, session) {
 		}
 		statsPckgs = data.frame(table(dtPckgs));
 		names(statsPckgs)[1] = "Date";
+		statsPckgs$Date = as.Date(statsPckgs$Date);
+		# Plot:
+		output$imgStatsPeriod = renderPlot({
+			par.old = par(mar = c(4.2, 4.5, 0.5, 0.5) + 0.1);
+			plot(statsPckgs, type = "l", lwd = 2, col = "#F03264");
+			});
+		# Table:
 		DT::datatable(statsPckgs, filter = 'top',
 			options = option.regex(values$fltRegex,
 				varia = list(order = list(1, "desc"))));

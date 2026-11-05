@@ -137,6 +137,7 @@ getUI = function() {
 			fluidRow(
 				selectInput("selStatsPeriod", "Period", getStatsPeriods(), selected = "Monthly")
 			),
+			fluidRow(plotOutput("imgStatsPeriod", height = "560px"),),
 			HTML("</div>") # END DIV for Column
 			)
 		),
