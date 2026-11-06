@@ -410,10 +410,23 @@ server.app = function(input, output, session) {
 		return(id);
 	}
 	
-	# Filter History
+	### Filter History
 	output$tblFltHistory = DT::renderDT({
 		DT::datatable(values$fltHist, filter = 'top',
 			options = option.regex(values$fltRegex));
+	})
+	# Advanced Search: Apply Filter
+	observeEvent(input$btnFltApply, {
+		id = input$tblFltHistory_rows_selected;
+		if(length(id) == 0) {
+			cat("Filter History: Nothing selected!\n");
+			return();
+		} else if(length(id) > 1) {
+			id = id[length(id)]; # Last Selected Item
+		}
+		sFlt = values$fltHist$Flt[id];
+		# Update Search-Box:
+		updateTextInput(session, "inputSearch", value = sFlt);
 	})
 	
 	### Stats

@@ -84,18 +84,24 @@ getUI = function() {
 			fluidRow(style = "padding-bottom:12px;"),
 			h2("Table with Installed Packages:"),
 		)),
+		### Advanced Search
 		tabPanel("Search", # icon = icon("Search"),
 			fluidRow(
 				column(5, textAreaInput("inputSearch",
-					" Insert multiple Search terms: 1 term per line! ", width = "100%", rows = 3)),
-				column(2, fluidRow(HTML("&nbsp;")),
-					fluidRow(actionButton("btnSearch", "Search")), # Advanced Search
+					" Insert multiple Search terms: 1 term per line; start line with \"!\" to negate! ",
+					width = "100%", rows = 3)),
+				column(3, fluidRow(HTML("&nbsp;")),
+					fluidRow(
+					actionButton("btnSearch", "Search"), # Advanced Search
 					downloadButton("savePkgsAdv", "Save"), # Save List of Packages
 					"Save Table",
+					),
+					fluidRow(
 					actionButton("openPkgsAdv", "Open"), # Open Selection
-					"Open selection"
+					"Open selection",
+					),
 				),
-				column(5, "TODO")
+				column(4, "TODO")
 			),
 			fluidRow(DT::DTOutput("tblSearch"))
 		),
@@ -128,7 +134,10 @@ getUI = function() {
 			),
 		),
 		tabPanel("History", # icon = icon("History"),
-			fluidRow(DT::DTOutput("tblFltHistory"))
+			fluidRow(DT::DTOutput("tblFltHistory")),
+			fluidRow(
+				actionButton("btnFltApply", "Apply"),
+			),
 		),
 		tabPanel("Stats", # icon = icon("Stats"),
 			column(5, fluidRow(DT::DTOutput("tblStats"))),
