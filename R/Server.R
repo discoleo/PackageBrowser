@@ -39,6 +39,7 @@ server.app = function(input, output, session) {
 		fltWholeWord  = TRUE,  # View only exact word;
 		chkFltNewer   = FALSE, # Filter: Show only newer Packages
 		pkgsInstalled = NULL,  # Installed Packages
+		WordSource = "Data",   # Initial Source for Word-Tab;
 		pageWord   = 0,
 		statsType  = "Monthly",  # c("Yearly", "Monthly", "MonthlyAll")
 		NULLARG = NULL
@@ -335,11 +336,21 @@ server.app = function(input, output, session) {
 	
 	### Words
 	output$tblWords = DT::renderDT({
-		x = values$dfFltData$Title;
-		cat("Rows: ", length(x), "\n");
+		x = getWordSource();
+		if(is.null(x)) return();
+		x = x$Title;
+		cat("Data-Rows: ", length(x), "\n");
 		sW = as.words(x);
 		values$dfWords = sW;
 		asDT(sW, dom = "tpil");
+	})
+	getWordSource = reactive({
+		if(values$WordSource == "Data") {
+			x = values$dfFltData;
+		} else {
+			x = values$dfSearch;
+		}
+		return(x);
 	})
 	
 	getWordPage = function() {
@@ -367,12 +378,15 @@ server.app = function(input, output, session) {
 		if(is.null(pg) || pg == 0) return();
 		setPage(pg, 'tblWords');
 	})
+	observeEvent(input$selWordSource, {
+		values$WordSource = input$selWordSource;
+	})
 	
 	observeEvent(input$chkWord, {
 		values$fltWholeWord = input$chkWord;
 	})
 	observeEvent(input$btnViewByWord, {
-		x  = values$dfFltData;
+		x  = getWordSource();
 		if(is.null(x)) return();
 		id = input$tblWords_rows_selected;
 		if(length(id) == 0) return();
@@ -415,7 +429,7 @@ server.app = function(input, output, session) {
 		DT::datatable(values$fltHist, filter = 'top',
 			options = option.regex(values$fltRegex));
 	})
-	# Advanced Search: Apply Filter
+	# Copy Filter to Advanced Search-Tab
 	observeEvent(input$btnFltApply, {
 		id = input$tblFltHistory_rows_selected;
 		if(length(id) == 0) {

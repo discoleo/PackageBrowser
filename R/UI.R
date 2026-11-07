@@ -105,6 +105,13 @@ getUI = function() {
 			),
 			fluidRow(DT::DTOutput("tblSearch"))
 		),
+		### Search-History
+		tabPanel("History", # icon = icon("History"),
+			fluidRow(DT::DTOutput("tblFltHistory")),
+			fluidRow(
+				actionButton("btnFltApply", "Apply"),
+			),
+		),
 		### Words in Title
 		tabPanel("Words", # icon = icon("Words"),
 			fluidRow(
@@ -114,7 +121,8 @@ getUI = function() {
 			column(7,
 			# Padding: <top, right, bottom, left>
 			HTML("<div style='padding: 0px 0px 10px 20px;'>"),
-			fluidRow(column(6,
+			fluidRow(
+			column(6,
 			fluidRow(
 				textInput("inPageTblWords", "GoTo Word/Page:"),
 			),
@@ -124,6 +132,9 @@ getUI = function() {
 				actionButton("btnOpenPkgWord", "Open"),
 			)),
 			column(6,
+				fluidRow(
+				selectInput("selWordSource", "Source", getWordSource(), selected = "Data")
+				),
 				# Options: View must contain whole Word:
 				checkboxInput("chkWord", "Whole word", value = TRUE),
 			)),
@@ -131,12 +142,6 @@ getUI = function() {
 			fluidRow(DT::DTOutput("tblPkgsWords")),
 			HTML("</div>") # END DIV for Column
 			),
-			),
-		),
-		tabPanel("History", # icon = icon("History"),
-			fluidRow(DT::DTOutput("tblFltHistory")),
-			fluidRow(
-				actionButton("btnFltApply", "Apply"),
 			),
 		),
 		tabPanel("Stats", # icon = icon("Stats"),
@@ -176,6 +181,11 @@ fileInput.data = function(id, label) {
     );
 }
 
+getWordSource = function() {
+	c("Data-Tab" = "Data",
+	"Search-Tab" = "Search"
+	)
+}
 getStatsPeriods = function() {
 	c("Yearly" = "Yearly",
 	"Monthly: Last Year" = "Monthly",
