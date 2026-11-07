@@ -130,6 +130,7 @@ getUI = function() {
 				actionButton("btnGotoWord", "Page"),
 				actionButton("btnViewByWord", "View"),
 				actionButton("btnOpenPkgWord", "Open"),
+				downloadButton("savePkgWord", "Save"),  # Save List of Packages
 			)),
 			column(6,
 				fluidRow(

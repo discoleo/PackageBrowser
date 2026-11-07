@@ -518,6 +518,16 @@ server.app = function(input, output, session) {
 			write.csv(x, file, row.names = FALSE);
 		}
 	)
+	output$savePkgWord = downloadHandler(
+		filename = function() {
+			paste("Packages.byWord.", as.Date(Sys.time()), ".csv", sep = "");
+		},
+		content = function(file) {
+			x = values$dfPkgWords;
+			if(is.null(x)) return(NULL);
+			write.csv(x, file, row.names = FALSE);
+		}
+	)
 	output$savePkgsAdv = downloadHandler(
 		filename = function() {
 			paste("Packages.", as.Date(Sys.time()), ".csv", sep = "");
