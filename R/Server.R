@@ -39,6 +39,7 @@ server.app = function(input, output, session) {
 		fltWholeWord  = TRUE,  # View only exact word;
 		chkFltNewer   = FALSE, # Filter: Show only newer Packages
 		pkgsInstalled = NULL,  # Installed Packages
+		pkgsInstalledCmp = NULL, # Newer Packages
 		WordSource = "Data",   # Initial Source for Word-Tab;
 		pageWord   = 0,
 		statsType  = "Monthly",  # c("Yearly", "Monthly", "MonthlyAll")
@@ -319,6 +320,7 @@ server.app = function(input, output, session) {
 			pkgs = pkgs[isNewer,];
 			if(nrow(pkgs) == 0) cat("NO newer packages!\n");
 		}
+		values$pkgsInstalledCmp = pkgs;
 		# Table:
 		DT::datatable(pkgs, filter = 'top',
 			options = option.regex(values$fltRegex,
@@ -332,6 +334,18 @@ server.app = function(input, output, session) {
 	# Filter: Only Newer Packages
 	observeEvent(input$chkFltNewer, {
 		values$chkFltNewer = input$chkFltNewer;
+	})
+	# Open Selected Package
+	observeEvent(input$btnOpenInstalledPkg, {
+		pkg = values$pkgsInstalledCmp;
+		if(is.null(pkg)) {
+			openPackage(NULL, NULL);
+			return();
+		}
+		id = input$tblPkgsInstalled_rows_selected;
+		sPkg = pkg$Package[id][1];
+		idData = match(sPkg, values$fullData$Package);
+		openPackage(idData, values$fullData);
 	})
 	
 	### Words

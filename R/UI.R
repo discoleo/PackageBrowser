@@ -77,6 +77,7 @@ getUI = function() {
 			fluidRow(style = "padding-bottom:14px; padding-left:20px;",
 			column(2,
 			actionButton("btnUpdatePkgs", "Update"),    # Update Installed Packages
+			actionButton("btnOpenInstalledPkg", "Open"), # Open Installed Package
 			), column(10,
 			checkboxInput("chkFltNewer", "Newer", value = TRUE), # Newer
 			),
