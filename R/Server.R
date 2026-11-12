@@ -282,10 +282,31 @@ server.app = function(input, output, session) {
 			DT::datatable(x, filter = 'top',
 				options = option.regex(values$fltRegex, varia = list(dom = "tipl"))));
 	})
+	# View Selected Packages
+	observeEvent(input$btnSearchViewSel, {
+		x = values$dfSearch;
+		if(is.null(x)) {
+			output$txtSearchMsg = renderText("");
+			return();
+		}
+		id = input$tblSearch_rows_selected;
+		if(is.null(id)) {
+			output$txtSearchMsg = renderText("No packages selected!");
+			return();
+		}
+		output$txtSearchMsg = renderText("");
+		values$dfSearchSelected = x[id,];
+	})
+	output$tblSearchSelected = DT::renderDT({
+		x = values$dfSearchSelected;
+		if(is.null(x)) return();
+		DT::datatable(x, filter = 'top',
+				options = option.regex(values$fltRegex, varia = list(dom = "tipl")));
+	})
 	
 	### Tables
 	
-	# Data
+	### Main Data
 	dataTable = function(date = NULL) ({
 		if(is.null(values$fullData)) {
 			return(tblMessageDownload());
@@ -441,7 +462,8 @@ server.app = function(input, output, session) {
 	### Filter History
 	output$tblFltHistory = DT::renderDT({
 		DT::datatable(values$fltHist, filter = 'top',
-			options = option.regex(values$fltRegex));
+			options = option.regex(values$fltRegex,
+			varia   = list(dom = "tipl")));
 	})
 	# Copy Filter to Advanced Search-Tab
 	observeEvent(input$btnFltApply, {

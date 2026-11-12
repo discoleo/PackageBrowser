@@ -94,8 +94,9 @@ getUI = function() {
 				column(3, fluidRow(HTML("&nbsp;")),
 					fluidRow(
 					actionButton("btnSearch", "Search"), # Advanced Search
-					downloadButton("savePkgsAdv", "Save"), # Save List of Packages
-					"Save Table",
+					# Save Table with Packages
+					downloadButton("savePkgsAdv", "Save Table"),
+					actionButton("btnSearchViewSel", "View Selected"),
 					),
 					fluidRow(
 					actionButton("openPkgsAdv", "Open"), # Open Selection
@@ -104,14 +105,16 @@ getUI = function() {
 				),
 				column(4, "TODO")
 			),
-			fluidRow(DT::DTOutput("tblSearch"))
+			fluidRow(DT::DTOutput("tblSearch")),
+			fluidRow(DT::DTOutput("tblSearchSelected")),
+			fluidRow(textOutput("txtSearchMsg")),
 		),
 		### Search-History
 		tabPanel("History", # icon = icon("History"),
-			fluidRow(DT::DTOutput("tblFltHistory")),
 			fluidRow(
 				actionButton("btnFltApply", "Apply"),
 			),
+			fluidRow(DT::DTOutput("tblFltHistory")),
 		),
 		### Words in Title
 		tabPanel("Words", # icon = icon("Words"),
